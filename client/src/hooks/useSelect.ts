@@ -4,17 +4,15 @@ import Konva from "konva";
 import { KonvaEventObject } from 'konva/lib/Node';
 import { Layer } from "konva/lib/Layer";
 import { ISelectedArea, initialMouseArea } from "./useMouseArea";
-import canvasStore from "../stores/canvasStore";
 import { isShapeInSelection } from "../helpers/isShapeInSelection";
 
 
-const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, setTool: Dispatch<React.SetStateAction<TOOLS>>, selectedArea: ISelectedArea) => {
+const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, setTool: Dispatch<React.SetStateAction<TOOLS>>, selectedArea: ISelectedArea , shapes:Shape[],setShapes:Dispatch<React.SetStateAction<Shape[]>>,styles:ShapeStyles,setStyles:Dispatch<React.SetStateAction<ShapeStyles>>) => {
     const selectedShapeRef = useRef<Shape | null>(null)
     const transformerRef = useRef(new Konva.Transformer())
     const [ctrlDown, setCtrlDown] = useState(false)
     const mouseDownRef = useRef(false)
     const selectedAreaRef = useRef<ISelectedArea>(selectedArea)
-    const {shapes,setShapes,styles,setStyles} = canvasStore
     const shapesRef = useRef<Shape[] | null>(shapes)
     const mainLayer = useRef<Layer | null>(null)
     const shapesInAreaRef = useRef<Shape[] | null>(null)
@@ -59,7 +57,6 @@ const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, set
             const newStyles: ShapeStyles = { ...styles }
 
             if (transformerRef.current.nodes().length==1) {
-
                 Object.keys(newStyles).forEach(key => {
                     const styleKey = key as keyof ShapeStyles
                     if (styleKey in event.target.attrs) {
@@ -111,7 +108,8 @@ const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, set
         }
 
         const handleMouseMove = () => {
-            if (!mouseDownRef.current || selectedShapeRef.current) {
+            if ((!mouseDownRef.current || selectedShapeRef.current )&& tool !== TOOLS.CURSOR) {
+
                 return
             }
 

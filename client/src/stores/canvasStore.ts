@@ -1,3 +1,4 @@
+/*
 import { makeAutoObservable } from "mobx"
 import { Shape, ShapeStyles } from "../types"
 
@@ -37,3 +38,4 @@ class canvasStore{
 
 
 export default new canvasStore()
+*/

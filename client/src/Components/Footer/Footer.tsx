@@ -1,16 +1,16 @@
-import {  useState } from "react";
+import {  Dispatch, FC, useState } from "react";
 import undoLeft from "../../icons/footer/undo-left.svg"
 import undoRight from "../../icons/footer/undo-right.svg"
 import { Shape } from "../../types";
-import canvasStore from "../../stores/canvasStore";
 
+interface IFooter{
+    shapes:Shape[]
+    setShapes:Dispatch<React.SetStateAction<Shape[]>>
+}
 
-
-const Footer =() => {
+const Footer:FC<IFooter> = ({shapes,setShapes}) => {
 
     const [сanceledShapes, setсanceledShapes] = useState<Shape[]>([])
-
-    const {shapes,setShapes} = canvasStore
 
     return (
         <footer className="absolute bottom-1 p-[10px]">

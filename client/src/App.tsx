@@ -5,19 +5,34 @@ import ToolBar from './Components/ToolBar/ToolBar'
 import Footer from './Components/Footer/Footer'
 import useTool from './hooks/useTool'
 import useMouseArea from './hooks/useMouseArea'
-import {  TOOLS } from './types'
+import {  Shape, ShapeStyles, TOOLS } from './types'
 import Shapes from './Components/Shapes/Shapes'
 import StylesBar from './Components/StylesBar/StylesBar'
 import useSelect from './hooks/useSelect'
-import canvasStore from './stores/canvasStore'
 import { observer } from 'mobx-react-lite'
+import { useState } from 'react'
 
 
 
 const App = observer(() => {
   const {onWheel, stagePos, stageScale} = useScale()
   const {tool,setTool} = useTool()
-  const {shapes} = canvasStore
+  //const {shapes} = canvasStore
+  const [shapes,setShapes] = useState<Shape[]>([])
+  const [styles,setStyles] = useState<ShapeStyles>({
+    fill:"#9a8437",
+    stroke:"#9a8437",
+    tension:0.05,
+    lineCap:"round",
+    lineJoin:"round",
+    strokeWidth:10,
+    cornerRadius:0,
+    opacity:1,
+    shadowColor:"transparent",
+    shadowBlur:0,
+    shadowOffset: {x:0,y:0},
+    shadowOpacity: 0.5
+})
 
   /* const [shapes,setShapes ]= useState<Shape[]>([
     {
@@ -40,8 +55,8 @@ const App = observer(() => {
   ])
 */
 
-  const {onMouseDownHandlerArea,mouseMoveHandler,mouseUpHandler , previewLayer , selectedArea } = useMouseArea(tool)
-  const {onMouseDownHandlerSelect,selectedShapeRef,mainLayer } = useSelect(previewLayer,tool,setTool,selectedArea)
+  const {onMouseDownHandlerArea,mouseMoveHandler,mouseUpHandler , previewLayer , selectedArea } = useMouseArea(tool,styles,setShapes,shapes)
+  const {onMouseDownHandlerSelect,selectedShapeRef,mainLayer } = useSelect(previewLayer,tool,setTool,selectedArea,shapes,setShapes,styles,setStyles)
 
 
 
@@ -49,7 +64,7 @@ const App = observer(() => {
   return (
     <main>
       <ToolBar tool={tool} setTool={setTool}/>
-      <StylesBar tool={tool} selectedShape={selectedShapeRef}/>
+      <StylesBar tool={tool} selectedShape={selectedShapeRef} setStyles={setStyles} styles={styles}/>
     <Stage
         width={window.innerWidth}
         height={window.innerHeight}
@@ -79,7 +94,7 @@ const App = observer(() => {
           />
         </Layer>
     </Stage>
-    <Footer/>
+    <Footer shapes={shapes} setShapes={setShapes}/>
     </main>
   )
 })

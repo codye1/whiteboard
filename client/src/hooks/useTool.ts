@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { TOOLS } from '../types';
-import canvasStore, { defaultStyles } from '../stores/canvasStore';
 
 
 
 const useTool = () => {
     const [tool,setTool] = useState<TOOLS>(TOOLS.CURSOR)
-    const {setStyles} = canvasStore
+
     useEffect(()=>{
-        setStyles(defaultStyles)
         const handleKeyPress = (event: globalThis.KeyboardEvent)=>{
             switch (event.key) {
                 case "1":

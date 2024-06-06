@@ -1,13 +1,12 @@
 import { KonvaEventObject } from 'konva/lib/Node';
-import { useRef, useState } from 'react';
+import { Dispatch, useRef, useState } from 'react';
 import { getRelativePointerPosition } from '../helpers/getRelativeMousePosition';
 import { Layer } from 'konva/lib/Layer';
-import { Shape, ShapeType, TOOLS } from '../types';
+import { Shape, ShapeStyles, ShapeType, TOOLS } from '../types';
 import { getNewSelectAreaSize } from '../helpers/getSizeArea';
 import { shapeSizing } from '../helpers/shapeSizing';
 import Konva from 'konva';
 import { v4 as uuidv4 } from 'uuid';
-import canvasStore from '../stores/canvasStore';
 
 export interface ISelectedArea{
     visible: boolean;
@@ -30,12 +29,12 @@ export const initialMouseArea:ISelectedArea = {
   };
 
 
-const useMouseArea = (tool:string ) => {
+const useMouseArea = (tool:string,styles:ShapeStyles ,setShapes:Dispatch<React.SetStateAction<Shape[]>> , shapes:Shape[]) => {
     const mouseDown = useRef(false)
     const [selectedArea , setSelectedArea] = useState(initialMouseArea)
     const previewLayer = useRef<Layer | null>(null)
     const shapePreview = useRef<Shape | null>(null)
-    const {shapes,setShapes,styles} = canvasStore
+
 
     const shape = shapePreview.current;
     const shapeToEdit = previewLayer.current?.findOne(`#${shape?.id}`)

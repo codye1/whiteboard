@@ -1,22 +1,23 @@
-import {  FC,MutableRefObject,} from 'react';
-import { Shape,  TOOLS } from '../../types/index';
+import { Dispatch, FC,MutableRefObject,} from 'react';
+import { Shape, ShapeStyles, TOOLS } from '../../types/index';
 import InputChangeColor from './Components/InputChangeColor';
 import InputChangeNumber from './Components/InputChangeNumber';
 import InputRange from './Components/InputRange';
 import InputChangeTwoNumber from './Components/InputChangeTwoNumber';
 import InputCheckBox from './Components/InputCheckBox';
-import canvasStore from '../../stores/canvasStore';
 
 
 interface IStylesBar{
+    setStyles:Dispatch<React.SetStateAction<ShapeStyles>>
+    styles:ShapeStyles
     tool:TOOLS
     selectedShape:MutableRefObject<Shape | null>
 }
 
-const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
+const StylesBar: FC<IStylesBar> = ({ styles, setStyles, tool ,selectedShape}) => {
 
 
-    const {styles,setStyles} = canvasStore
+    //const {styles,setStyles} = canvasStore
 
     if ((tool == TOOLS.CURSOR && !selectedShape.current) || tool == TOOLS.HAND) return null;
 
@@ -28,16 +29,16 @@ const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
                     inputId='strokeColor'
                     value={styles.stroke}
                     onChange={(event)=>{
-                        setStyles({
-                            ...styles,
+                        setStyles(value => ({
+                            ...value,
                             stroke: event.target.value
-                        });
+                        }));
                     }}
                     onClick={()=>{
-                        setStyles({
-                            ...styles,
+                        setStyles(value => ({
+                            ...value,
                             stroke: "transparent"
-                        });
+                        }));
                     }}
                     />
                 <InputChangeColor
@@ -45,16 +46,16 @@ const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
                     inputId='fillColor'
                     value={styles.fill}
                     onChange={(event)=>{
-                        setStyles({
-                            ...styles,
+                        setStyles(value => ({
+                            ...value,
                             fill: event.target.value
-                        });
+                        }));
                     }}
                     onClick={()=>{
-                        setStyles({
-                            ...styles,
+                        setStyles(value => ({
+                            ...value,
                             fill: "transparent"
-                        });
+                        }));
                     }}
                     />
                 <InputChangeNumber
@@ -63,10 +64,10 @@ const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
                     value={styles.strokeWidth}
                     onChange={(event)=>{
                         event.preventDefault();
-                            setStyles({
-                                ...styles,
+                            setStyles(value => ({
+                                ...value,
                                 strokeWidth: parseInt(event.target.value)
-                            });
+                            }));
                     }}
                 />
                 <InputChangeNumber
@@ -75,10 +76,10 @@ const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
                     value={styles.cornerRadius}
                     onChange={(event)=>{
                         event.preventDefault();
-                            setStyles({
-                                ...styles,
+                            setStyles(value => ({
+                                ...value,
                                 cornerRadius: parseInt(event.target.value)
-                            });
+                            }));
                     }}
                 />
                 <InputRange
@@ -89,10 +90,10 @@ const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
                     value={styles.opacity * 100}
                     onChange={(event)=>{
                         event.preventDefault();
-                        setStyles({
-                            ...styles,
+                        setStyles(value => ({
+                            ...value,
                             opacity: parseInt(event.target.value) * 0.01
-                        });
+                        }));
                     }}
                 />
                 <InputCheckBox
@@ -107,11 +108,11 @@ const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
                             selectedShape.current.shadow = event.target.checked
                         }
 
-                        setStyles({
-                            ...styles,
+                        setStyles(value => ({
+                            ...value,
                             shadowBlur: event.target.checked ? 10 : 0,
-                            shadowOffset: event.target.checked ? styles.shadowOffset : { x: 0, y: 0 }
-                        });
+                            shadowOffset: event.target.checked ? value.shadowOffset : { x: 0, y: 0 }
+                        }));
                     }}
                 />
                 {selectedShape.current?.shadow &&
@@ -121,16 +122,16 @@ const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
                             inputId='shadowColor'
                             value={styles.shadowColor}
                             onChange={(event)=>{
-                                setStyles({
-                                    ...styles,
+                                setStyles(value => ({
+                                    ...value,
                                     shadowColor: event.target.value
-                                });
+                                }));
                             }}
                             onClick={()=>{
-                                setStyles({
-                                    ...styles,
+                                setStyles(value => ({
+                                    ...value,
                                     shadowColor: "transparent"
-                                });
+                                }));
                             }}
                         />
                         <InputChangeTwoNumber
@@ -139,23 +140,23 @@ const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
                             value={styles.shadowOffset}
                             onChange1={(event)=>{
                                 event.preventDefault();
-                                    setStyles({
-                                        ...styles,
+                                    setStyles(value => ({
+                                        ...value,
                                         shadowOffset: {
-                                            ...styles.shadowOffset,
+                                            ...value.shadowOffset,
                                             x: parseInt(event.target.value)
                                         }
-                                    });
+                                    }));
                             }}
                             onChange2={(event)=>{
                                 event.preventDefault();
-                                    setStyles({
-                                        ...styles,
+                                    setStyles(value => ({
+                                        ...value,
                                         shadowOffset: {
-                                            ...styles.shadowOffset,
+                                            ...value.shadowOffset,
                                             y: parseInt(event.target.value)
                                         }
-                                    });
+                                    }));
                             }}
                         />
                         <InputChangeNumber
@@ -164,10 +165,10 @@ const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
                             value={styles.shadowBlur}
                             onChange={(event)=>{
                                 event.preventDefault();
-                                setStyles({
-                                    ...styles,
+                                setStyles(value => ({
+                                    ...value,
                                     shadowBlur: parseInt(event.target.value)
-                                });
+                                }));
                             }}
                         />
                         <InputRange
@@ -178,10 +179,10 @@ const StylesBar: FC<IStylesBar> = ({tool ,selectedShape}) => {
                             value={styles.shadowOpacity * 100}
                             onChange={(event)=>{
                                 event.preventDefault();
-                                setStyles({
-                                    ...styles,
+                                setStyles(value => ({
+                                    ...value,
                                     shadowOpacity: parseInt(event.target.value) * 0.01
-                                });
+                                }));
                             }}
                         />
                     </>
