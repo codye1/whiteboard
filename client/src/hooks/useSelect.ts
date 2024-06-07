@@ -5,26 +5,25 @@ import { KonvaEventObject } from 'konva/lib/Node';
 import { Layer } from "konva/lib/Layer";
 import { ISelectedArea, initialMouseArea } from "./useMouseArea";
 import { isShapeInSelection } from "../helpers/isShapeInSelection";
+import { useAppDispatch, useAppSelector } from "./hooks";
+import { setShapes, setStyles } from "../reducers/canvas";
 
-
-const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, setTool: Dispatch<React.SetStateAction<TOOLS>>, selectedArea: ISelectedArea , shapes:Shape[],setShapes:Dispatch<React.SetStateAction<Shape[]>>,styles:ShapeStyles,setStyles:Dispatch<React.SetStateAction<ShapeStyles>>) => {
+const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, setTool: Dispatch<React.SetStateAction<TOOLS>>, selectedArea: ISelectedArea ) => {
     const selectedShapeRef = useRef<Shape | null>(null)
     const transformerRef = useRef(new Konva.Transformer())
     const [ctrlDown, setCtrlDown] = useState(false)
     const mouseDownRef = useRef(false)
     const selectedAreaRef = useRef<ISelectedArea>(selectedArea)
-    const shapesRef = useRef<Shape[] | null>(shapes)
+    const {shapes,styles} = useAppSelector(state=>state.canvas)
+    const dispatch = useAppDispatch()
     const mainLayer = useRef<Layer | null>(null)
     const shapesInAreaRef = useRef<Shape[] | null>(null)
-
 
 
     function onMouseDownHandlerSelect(event: KonvaEventObject<MouseEvent>) {
 
         if (tool !== TOOLS.CURSOR) return
-        shapesInAreaRef.current
         const stage = event.target.getStage()
-
 
         if (event.target == stage) {
             selectedAreaRef.current = initialMouseArea
@@ -34,8 +33,6 @@ const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, set
             return
         }
 
-
-
         if (transformerRef.current.nodes().find(node=>node.attrs.id==event.target.attrs.id)) return
 
         if (previewLayer.current) {
@@ -43,9 +40,6 @@ const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, set
         }
 
         selectedShapeRef.current = shapes.find((shape) => shape.id === event.target.attrs.id) || null;
-
-
-
 
         if (selectedShapeRef.current) {
 
@@ -78,7 +72,7 @@ const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, set
                     ? { ...shape, ...styles }
                     : shape
             );
-            setShapes(updatedShapes);
+            dispatch(setShapes(updatedShapes));
         }
     }, [styles, setStyles])
 
@@ -91,9 +85,6 @@ const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, set
         selectedAreaRef.current = selectedArea; // Update ref when selectedArea changes
     }, [selectedArea])
 
-    useEffect(() => {
-        shapesRef.current = shapes;
-    }, [shapes]);
 
     useEffect(() => {
         const handleCtrlDown = (e: KeyboardEvent) => {
@@ -108,12 +99,11 @@ const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, set
         }
 
         const handleMouseMove = () => {
-            if ((!mouseDownRef.current || selectedShapeRef.current )&& tool !== TOOLS.CURSOR) {
-
+            if (!mouseDownRef.current || selectedShapeRef.current || tool !== TOOLS.CURSOR) {
                 return
             }
 
-            shapesInAreaRef.current = shapesRef.current?.filter((shape)=>{
+            shapesInAreaRef.current = shapes.filter((shape)=>{
                 const node = mainLayer.current?.findOne(`#${shape.id}`)
                 if (node) {
                  return isShapeInSelection(node.getClientRect(),selectedAreaRef.current)
@@ -129,7 +119,9 @@ const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, set
             if (shapesInAreaRef.current && transformerRef.current.nodes().length==0) {
                 selectedShapeRef.current = null
 
-                const nodeShapes = shapesInAreaRef.current.map(shape => mainLayer.current?.findOne(`#${shape.id}`)).filter((node): node is Konva.Node => node !== undefined);
+                const nodeShapes = shapesInAreaRef.current
+                    .map(shape => mainLayer.current?.findOne(`#${shape.id}`))
+                    .filter((node): node is Konva.Node => node !== undefined);
 
 
                 transformerRef.current.nodes(nodeShapes)
@@ -154,6 +146,7 @@ const useSelect = (previewLayer: MutableRefObject<Layer | null>,tool: TOOLS, set
         window.addEventListener("mouseup", handleMouseUp)
         window.addEventListener("keydown", handleCtrlDown)
         window.addEventListener("keyup", handleCtrlUp)
+
         return () => {
             window.removeEventListener("mousemove", handleMouseMove)
             window.removeEventListener("mousedown", handleMouseDown)

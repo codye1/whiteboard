@@ -1,16 +1,16 @@
 import { FC, } from "react";
-import { Shape, ShapeType, TOOLS,} from "../../types";
+import { ShapeType, TOOLS,} from "../../types";
 import { Ellipse, Line, Rect } from "react-konva";
-import { observer } from "mobx-react-lite";
+import { useAppSelector } from "../../hooks/hooks";
 
 interface IShapes{
-    shapes: Shape[],
-    tool:string,
+    tool:TOOLS,
 }
 
-const Shapes:FC<IShapes> = observer(({shapes , tool }) => {
+const Shapes:FC<IShapes> = ({ tool }) => {
 
-    const isDraggable = TOOLS.CURSOR== tool
+    const isDraggable = TOOLS.CURSOR == tool
+    const shapes = useAppSelector(state=>state.canvas.shapes)
 
     return (
         shapes.map((shape)=>{
@@ -50,6 +50,6 @@ const Shapes:FC<IShapes> = observer(({shapes , tool }) => {
             }
         })
     );
-})
+}
 
 export default Shapes;

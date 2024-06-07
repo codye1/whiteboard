@@ -5,34 +5,62 @@ import ToolBar from './Components/ToolBar/ToolBar'
 import Footer from './Components/Footer/Footer'
 import useTool from './hooks/useTool'
 import useMouseArea from './hooks/useMouseArea'
-import {  Shape, ShapeStyles, TOOLS } from './types'
+import { TOOLS } from './types'
 import Shapes from './Components/Shapes/Shapes'
 import StylesBar from './Components/StylesBar/StylesBar'
 import useSelect from './hooks/useSelect'
-import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
 
 
 
-const App = observer(() => {
+const App = () => {
   const {onWheel, stagePos, stageScale} = useScale()
   const {tool,setTool} = useTool()
-  //const {shapes} = canvasStore
-  const [shapes,setShapes] = useState<Shape[]>([])
-  const [styles,setStyles] = useState<ShapeStyles>({
-    fill:"#9a8437",
-    stroke:"#9a8437",
-    tension:0.05,
-    lineCap:"round",
-    lineJoin:"round",
-    strokeWidth:10,
-    cornerRadius:0,
-    opacity:1,
-    shadowColor:"transparent",
-    shadowBlur:0,
-    shadowOffset: {x:0,y:0},
-    shadowOpacity: 0.5
-})
+  const {onMouseDownHandlerArea,mouseMoveHandler,mouseUpHandler , previewLayer , selectedArea } = useMouseArea(tool)
+  const {onMouseDownHandlerSelect,selectedShapeRef,mainLayer } = useSelect(previewLayer,tool,setTool,selectedArea)
+
+
+  return (
+    <main>
+      <ToolBar tool={tool} setTool={setTool}/>
+      <StylesBar tool={tool} selectedShape={selectedShapeRef}/>
+    <Stage
+        width={window.innerWidth}
+        height={window.innerHeight}
+        draggable = {TOOLS.HAND == tool}
+        onWheel={onWheel}
+        {...stagePos}
+        scale={{x:stageScale,y:stageScale}}
+        onMouseDown={(event=>{
+          onMouseDownHandlerArea(event)
+          onMouseDownHandlerSelect(event)
+        })}
+
+        onMouseMove={mouseMoveHandler}
+        onMouseUp={mouseUpHandler}
+        >
+        <Layer ref={mainLayer}>
+          <Shapes tool={tool}/>
+        </Layer>
+        <Layer ref={previewLayer}></Layer>
+        <Layer>
+          <Rect
+            {...selectedArea}
+            opacity={0.3}
+            fill="aqua"
+            stroke="blue"
+            strokeWidth={1}
+          />
+        </Layer>
+    </Stage>
+    <Footer/>
+    </main>
+  )
+}
+
+export default App
+
+
+
 
   /* const [shapes,setShapes ]= useState<Shape[]>([
     {
@@ -54,49 +82,3 @@ const App = observer(() => {
     }
   ])
 */
-
-  const {onMouseDownHandlerArea,mouseMoveHandler,mouseUpHandler , previewLayer , selectedArea } = useMouseArea(tool,styles,setShapes,shapes)
-  const {onMouseDownHandlerSelect,selectedShapeRef,mainLayer } = useSelect(previewLayer,tool,setTool,selectedArea,shapes,setShapes,styles,setStyles)
-
-
-
-
-  return (
-    <main>
-      <ToolBar tool={tool} setTool={setTool}/>
-      <StylesBar tool={tool} selectedShape={selectedShapeRef} setStyles={setStyles} styles={styles}/>
-    <Stage
-        width={window.innerWidth}
-        height={window.innerHeight}
-        draggable = {TOOLS.HAND == tool}
-        onWheel={onWheel}
-        {...stagePos}
-        scale={{x:stageScale,y:stageScale}}
-        onMouseDown={(event=>{
-          onMouseDownHandlerArea(event)
-          onMouseDownHandlerSelect(event)
-        })}
-
-        onMouseMove={mouseMoveHandler}
-        onMouseUp={mouseUpHandler}
-        >
-        <Layer ref={mainLayer}>
-          <Shapes tool={tool} shapes={shapes} />
-        </Layer>
-        <Layer ref={previewLayer}></Layer>
-        <Layer>
-          <Rect
-            {...selectedArea}
-            opacity={0.3}
-            fill="aqua"
-            stroke="blue"
-            strokeWidth={1}
-          />
-        </Layer>
-    </Stage>
-    <Footer shapes={shapes} setShapes={setShapes}/>
-    </main>
-  )
-})
-
-export default App

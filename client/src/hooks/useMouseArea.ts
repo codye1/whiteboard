@@ -1,12 +1,14 @@
 import { KonvaEventObject } from 'konva/lib/Node';
-import { Dispatch, useRef, useState } from 'react';
+import {  useRef, useState } from 'react';
 import { getRelativePointerPosition } from '../helpers/getRelativeMousePosition';
 import { Layer } from 'konva/lib/Layer';
-import { Shape, ShapeStyles, ShapeType, TOOLS } from '../types';
+import { Shape,  ShapeType, TOOLS } from '../types';
 import { getNewSelectAreaSize } from '../helpers/getSizeArea';
 import { shapeSizing } from '../helpers/shapeSizing';
 import Konva from 'konva';
 import { v4 as uuidv4 } from 'uuid';
+import { useAppDispatch, useAppSelector } from './hooks';
+import { setShapes } from '../reducers/canvas';
 
 export interface ISelectedArea{
     visible: boolean;
@@ -29,13 +31,13 @@ export const initialMouseArea:ISelectedArea = {
   };
 
 
-const useMouseArea = (tool:string,styles:ShapeStyles ,setShapes:Dispatch<React.SetStateAction<Shape[]>> , shapes:Shape[]) => {
+const useMouseArea = (tool:string) => {
     const mouseDown = useRef(false)
     const [selectedArea , setSelectedArea] = useState(initialMouseArea)
     const previewLayer = useRef<Layer | null>(null)
     const shapePreview = useRef<Shape | null>(null)
-
-
+    const {shapes,styles} = useAppSelector(state=>state.canvas)
+    const dispatch =useAppDispatch()
     const shape = shapePreview.current;
     const shapeToEdit = previewLayer.current?.findOne(`#${shape?.id}`)
 
@@ -85,8 +87,6 @@ const useMouseArea = (tool:string,styles:ShapeStyles ,setShapes:Dispatch<React.S
             shapeToEdit.setAttr("points", points)
             shapePreview.current = {...shape , }
         }
-
-    console.log("test");
         previewLayer.current?.batchDraw()
     }
 
@@ -177,7 +177,7 @@ const useMouseArea = (tool:string,styles:ShapeStyles ,setShapes:Dispatch<React.S
             const shapeToEdit = previewLayer.current?.findOne(`#${shape.id}`)
             shapeToEdit?.destroy()
 
-            setShapes([...shapes,shape])
+            dispatch(setShapes([...shapes,shape]))
             shapePreview.current = null
         }
         setSelectedArea(initialMouseArea)
