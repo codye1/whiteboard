@@ -1,196 +1,212 @@
-import {  FC,MutableRefObject,} from 'react';
-import { Shape,  TOOLS } from '../../types/index';
+import { FC, MutableRefObject } from 'react';
 import InputChangeColor from './Components/InputChangeColor';
 import InputChangeNumber from './Components/InputChangeNumber';
 import InputRange from './Components/InputRange';
 import InputChangeTwoNumber from './Components/InputChangeTwoNumber';
-import InputCheckBox from './Components/InputCheckBox';
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { setStyles } from '../../reducers/canvas';
+import {useAppSelector } from '../../hooks/hooks';
+import { Transformer } from 'konva/lib/shapes/Transformer';
+import { message, } from '../../types/message';
+import { TOOLS } from '../../types/shape';
+import RadioButtons from './Components/RadioButtons';
+import monospace from "../../icons/stylesbar/monospace.svg"
+import cursive from "../../icons/stylesbar/cursive.svg"
+import arial from "../../icons/stylesbar/arial.svg"
+import centerAlign from "../../icons/stylesbar/centeralign.svg"
+import leftAlign from "../../icons/stylesbar/leftalign.svg"
+import rightAlign from "../../icons/stylesbar/rightalign.svg"
+import { Node, NodeConfig } from 'konva/lib/Node';
+import useStylesBar from './useStylesBar';
 
-
-interface IStylesBar{
-    tool:TOOLS
-    selectedShape:MutableRefObject<Shape | null>
+interface IStylesBar {
+  tool: TOOLS;
+  transformerRef: MutableRefObject<Transformer | null>;
+  sendMessage: (message: message) => void;
+  transformerHaveText: MutableRefObject<Node<NodeConfig> | null>
 }
 
-const StylesBar: FC<IStylesBar> = ({ tool ,selectedShape}) => {
+const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transformerHaveText }) => {
+  const { styles,  textStyles } = useAppSelector(
+    (state) => state.canvas
+  );
 
-    const styles = useAppSelector(state=>state.canvas.styles)
-    const dispatch = useAppDispatch()
+  const {saveChangeStyleToHistory,onChangeStyleHandler} = useStylesBar(sendMessage,transformerRef)
+  if (
+    (tool == TOOLS.CURSOR &&
+      transformerRef.current &&
+      transformerRef.current.nodes().length == 0) ||
+    tool == TOOLS.HAND
+  )
+    return null;
 
-    if ((tool == TOOLS.CURSOR && !selectedShape.current) || tool == TOOLS.HAND) return null;
 
 
 
-    return (
-        <menu className='fixed top-10 left-1 rounded-[6px] bg-black z-20 p-2'>
-            <div className='flex flex-col'>
-                <InputChangeColor
-                    title='Обводка'
-                    inputId='strokeColor'
-                    value={styles.stroke}
-                    onChange={(event)=>{
-                        dispatch(setStyles({
-                            ...styles,
-                            stroke: event.target.value
-                        }))
-                    }}
-                    onClick={()=>{
-                        dispatch(setStyles({
-                            ...styles,
-                            stroke: "transparent"
-                        }))
-                    }}
-                    />
-                <InputChangeColor
-                    title='Фон'
-                    inputId='fillColor'
-                    value={styles.fill}
-                    onChange={(event)=>{
-                        dispatch(setStyles({
-                            ...styles,
-                            fill: event.target.value
-                        }))
-                    }}
-                    onClick={()=>{
-                        dispatch(setStyles({
-                            ...styles,
-                            fill: "transparent"
-                        }))
-                    }}
-                    />
-                <InputChangeNumber
-                    title='Товщина обводки'
-                    inputId='strokeWidth'
-                    value={styles.strokeWidth}
-                    onChange={(event)=>{
-                        event.preventDefault();
-                        dispatch(setStyles({
-                            ...styles,
-                            strokeWidth: parseInt(event.target.value)
-                        }))
-                    }}
-                />
-                <InputChangeNumber
-                    title='Радіус угла'
-                    inputId='cornerRadius'
-                    value={styles.cornerRadius}
-                    onChange={(event)=>{
-                        event.preventDefault();
-                        dispatch(setStyles({
-                            ...styles,
-                            cornerRadius: parseInt(event.target.value)
-                        }))
-                    }}
-                />
-                <InputRange
-                    title='Прозорість'
-                    inputId='opacity'
-                    max={100}
-                    min={0}
-                    value={styles.opacity * 100}
-                    onChange={(event)=>{
-                        event.preventDefault();
-                        dispatch(setStyles({
-                            ...styles,
-                            opacity: parseInt(event.target.value) * 0.01
-                        }))
-                    }}
-                />
-                <InputCheckBox
-                    title='Тінь'
-                    inputId="shadow"
-                    value={selectedShape.current?.shadow}
-                    onChange={(event)=>{
-                        if (selectedShape.current) {
-                            selectedShape.current.shadow = event.target.checked
-                        }
-                        if (selectedShape.current) {
-                            selectedShape.current.shadow = event.target.checked
-                        }
-                        dispatch(setStyles({
-                            ...styles,
-                            shadowBlur: event.target.checked ? 10 : 0,
-                            shadowOffset: event.target.checked ? styles.shadowOffset : { x: 0, y: 0 }
-                        }))
-                    }}
-                />
-                {selectedShape.current?.shadow &&
-                    <>
-                        <InputChangeColor
-                            title='Колір тіні'
-                            inputId='shadowColor'
-                            value={styles.shadowColor}
-                            onChange={(event)=>{
-                                dispatch(setStyles({
-                                    ...styles,
-                                    shadowColor: event.target.value
-                                }))
-                            }}
-                            onClick={()=>{
-                                dispatch(setStyles({
-                                    ...styles,
-                                    shadowColor: "transparent"
-                                }))
-                            }}
-                        />
-                        <InputChangeTwoNumber
-                            title='Зсув тіні'
-                            inputId='shadowOffset'
-                            value={styles.shadowOffset}
-                            onChange1={(event)=>{
-                                event.preventDefault();
-                                dispatch(setStyles({
-                                    ...styles,
-                                    shadowOffset: {
-                                        ...styles.shadowOffset,
-                                        x: parseInt(event.target.value)
-                                    }
-                                }))
-                            }}
-                            onChange2={(event)=>{
-                                event.preventDefault();
-                                dispatch(setStyles({
-                                    ...styles,
-                                    shadowOffset: {
-                                        ...styles.shadowOffset,
-                                        y: parseInt(event.target.value)
-                                    }
-                                }))
-                            }}
-                        />
-                        <InputChangeNumber
-                            title='Розмиття тіні'
-                            inputId='shadowBlur'
-                            value={styles.shadowBlur}
-                            onChange={(event)=>{
-                                event.preventDefault();
-                                dispatch(setStyles({
-                                    ...styles,
-                                    shadowBlur: parseInt(event.target.value)
-                                }))
-                            }}
-                        />
-                        <InputRange
-                            title='Прозорість тіні'
-                            inputId='shadowOpacity'
-                            max={100}
-                            min={0}
-                            value={styles.shadowOpacity * 100}
-                            onChange={(event)=>{
-                                event.preventDefault();
-                                dispatch(setStyles({
-                                    ...styles,
-                                    shadowOpacity: parseInt(event.target.value) * 0.01
-                                }))
-                            }}
-                        />
-                    </>
+  return (
+    <menu className="fixed top-[100px] left-1 rounded-[6px] bg-black z-20 p-2 flex-col">
+      <div className="flex flex-col">
+        {
+          !(transformerHaveText.current && transformerRef.current?.nodes().length==1) &&
+          <>
+            <h1 className='text-white'>Настройки фігури</h1>
+            <InputChangeColor
+              title="Обводка"
+              inputId="strokeShape"
+              keyStyle='stroke'
+              value={styles.stroke}
+              onChangeHandler={onChangeStyleHandler("shape")}
+              saveChangeToHistory={saveChangeStyleToHistory("shape")}
+            />
+            <InputChangeColor
+              title="Фон"
+              inputId="fillShape"
+              keyStyle='fill'
+              value={styles.fill}
+              onChangeHandler={onChangeStyleHandler("shape")}
+              saveChangeToHistory={saveChangeStyleToHistory("shape")}
+            />
+            <InputChangeNumber
+              title="Товщина обводки"
+              inputId="strokeWidthShape"
+              keyStyle='strokeWidth'
+              value={styles.strokeWidth}
+              onChangeHandler={onChangeStyleHandler("shape")}
+              saveChangeToHistory={saveChangeStyleToHistory("shape")}
+            />
+            <InputChangeNumber
+              title="Радіус угла"
+              inputId="cornerRadiusShape"
+              keyStyle='cornerRadius'
+              value={styles.cornerRadius}
+              onChangeHandler={onChangeStyleHandler("shape")}
+              saveChangeToHistory={saveChangeStyleToHistory("shape")}
+            />
+            <InputRange
+              title="Прозорість"
+              inputId="opacityShape"
+              keyStyle='opacity'
+              max={100}
+              min={0}
+              value={styles.opacity * 100}
+              onChangeHandler={onChangeStyleHandler("shape")}
+              saveChangeToHistory={saveChangeStyleToHistory("shape")}
+            />
+            <h1 className='text-white'>Настройки тіні</h1>
+            <InputChangeColor
+              title="Колір тіні"
+              inputId="shadowColor"
+              keyStyle='shadowColor'
+              value={styles.shadowColor}
+              onChangeHandler={onChangeStyleHandler("shape")}
+              saveChangeToHistory={saveChangeStyleToHistory("shape")}
+            />
+            <InputChangeTwoNumber
+              mainTitle="Зсув"
+              titleOne="X"
+              titleTwo="Y"
+              inputId="shadowOffset"
+              keyStyleOne='shadowOffsetX'
+              keyStyleTwo='shadowOffsetY'
+              value={{ x: styles.shadowOffsetX, y: styles.shadowOffsetY }}
+              onChangeHandler={onChangeStyleHandler("shape")}
+              saveChangeToHistory={saveChangeStyleToHistory("shape")}
+            />
+            <InputChangeNumber
+              title="Розмиття"
+              inputId="shadowBlur"
+              keyStyle="shadowBlur"
+              value={styles.shadowBlur}
+              onChangeHandler={onChangeStyleHandler("shape")}
+              saveChangeToHistory={saveChangeStyleToHistory("shape")}
+            />
+            <InputRange
+              title="Прозорість"
+              inputId="shadowOpacity"
+              keyStyle='shadowOpacity'
+              max={100}
+              min={0}
+              value={styles.shadowOpacity * 100}
+              onChangeHandler={onChangeStyleHandler("shape")}
+              saveChangeToHistory={saveChangeStyleToHistory("shape")}
+            />
+          </>
+        }
+
+      </div>
+      {
+        transformerHaveText.current &&
+          <>
+            <h1 className='text-white'>Настройки тексту</h1>
+            <RadioButtons
+              value={textStyles.align}
+              onChangeHandler={onChangeStyleHandler("text")}
+              saveChangeToHistory={saveChangeStyleToHistory("text")}
+              keyStyle='align'
+              buttons={[
+                {
+                  src:leftAlign,
+                  value:"left"
+                },
+                {
+                  src:centerAlign,
+                  value:"center"
+                },
+                {
+                  src:rightAlign,
+                  value:"right"
                 }
-            </div>
-        </menu>
-    );
+              ]}
+            />
+            <RadioButtons
+              value={textStyles.fontFamily}
+              onChangeHandler={onChangeStyleHandler("text")}
+              saveChangeToHistory={saveChangeStyleToHistory("text")}
+              keyStyle='fontFamily'
+              buttons={[
+                {
+                  src:monospace,
+                  value:"monospace"
+                },
+                {
+                  src:cursive,
+                  value:"cursive"
+                },
+                {
+                  src:arial,
+                  value:"arial"
+                }
+
+              ]}
+            />
+            <InputChangeColor
+              title="Колір тексту"
+              inputId="fillText"
+              keyStyle='fill'
+              value={textStyles.fill}
+              onChangeHandler={onChangeStyleHandler("text")}
+              saveChangeToHistory={saveChangeStyleToHistory("text")}
+            />
+          <InputChangeNumber
+              title="Font size"
+              inputId="fontSizeText"
+              keyStyle='fontSize'
+              value={textStyles.fontSize}
+              onChangeHandler={onChangeStyleHandler("text")}
+              saveChangeToHistory={saveChangeStyleToHistory("text")}
+            />
+            <InputRange
+              title="Прозорість"
+              inputId="opacityText"
+              keyStyle='opacity'
+              max={100}
+              min={0}
+              value={textStyles.opacity * 100}
+              onChangeHandler={onChangeStyleHandler("text")}
+              saveChangeToHistory={saveChangeStyleToHistory("text")}
+            />
+          </>
+      }
+    </menu>
+  );
 };
 
 export default StylesBar;

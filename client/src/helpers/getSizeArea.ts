@@ -1,7 +1,6 @@
-import Place2D from '../types/index';
+import Place2D from '../types/shape';
 
-
-export const getNewSelectAreaSize = (start: Place2D, end: Place2D) => {
+const getNewSelectAreaSize = (start: Place2D, end: Place2D) => {
   const width = Math.abs(start.x - end.x);
   const height = Math.abs(start.y - end.y);
   const x = (start.x + end.x) / 2;
@@ -9,3 +8,5 @@ export const getNewSelectAreaSize = (start: Place2D, end: Place2D) => {
 
   return { width, height, x, y };
 };
+
+export default getNewSelectAreaSize;

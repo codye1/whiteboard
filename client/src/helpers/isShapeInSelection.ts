@@ -1,10 +1,6 @@
-import { IRect } from "konva/lib/types";
+import { IRect } from 'konva/lib/types';
 
-
-export const isShapeInSelection = (
-  r1: IRect,
-  r2: IRect
-) => {
+const isShapeInSelection = (r1: IRect, r2: IRect) => {
   return (
     r1.x >= r2.x &&
     r1.y >= r2.y &&
@@ -12,3 +8,5 @@ export const isShapeInSelection = (
     r1.y + r1.height <= r2.y + r2.height
   );
 };
+
+export default isShapeInSelection;
