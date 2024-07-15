@@ -1,55 +1,64 @@
-import { FC, } from "react";
-import { Shape, ShapeType, TOOLS,} from "../../types";
-import { Ellipse, Line, Rect } from "react-konva";
-import { observer } from "mobx-react-lite";
+import { FC } from 'react';
+import { Ellipse, Line, Rect, Text } from 'react-konva';
+import { useAppSelector } from '../../hooks/hooks';
+import { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
+import { Transformer } from 'konva/lib/shapes/Transformer';
+import { message } from '../../types/message';
+import { TOOLS, ShapeType } from '../../types/shape';
+import useHandlers from './useHandlers';
 
-interface IShapes{
-    shapes: Shape[],
-    tool:string,
+interface IShapes {
+  tool: TOOLS;
+  sendMessage: (message: message) => void;
+  transformerRef: React.MutableRefObject<Transformer>;
+  openEditText: (
+    mouseEvent: KonvaEventObject<MouseEvent>,
+    isAddShape?: Node<NodeConfig>
+  ) => void;
+  isChange: React.MutableRefObject<boolean>;
 }
 
-const Shapes:FC<IShapes> = observer(({shapes , tool }) => {
+const Shapes: FC<IShapes> = ({
+  tool,
+  sendMessage,
+  transformerRef,
+  openEditText,
+  isChange,
+}) => {
+  const isDraggable = TOOLS.CURSOR == tool;
+  const { shapes } = useAppSelector((state) => state.canvas);
 
-    const isDraggable = TOOLS.CURSOR== tool
+  const handlers = useHandlers(sendMessage, transformerRef, isChange);
 
-    return (
-        shapes.map((shape)=>{
-            switch (shape.type) {
-                case ShapeType.RECTANGLE:
-                    return (
-                        <Rect
-                            key={shape.id}
-                            draggable={isDraggable}
-                            {...shape}
-                        />
-                      )
-                case ShapeType.CIRCLE:
-                      return(
-                        <Ellipse
-                            key={shape.id}
-                            draggable={isDraggable}
-                            {...shape}
-                            height={shape.radiusY*2}
-                            width={shape.radiusX*2}
-                        />
-                      )
-                case ShapeType.LINE:
-                    console.log(shape);
+  return shapes.map((shape) => {
+    const props = {
+      draggable: isDraggable,
+      ...handlers,
+      onDblClick: openEditText,
+      ...shape,
+    };
 
-                    return(
-                        <Line
-                            key={shape.id}
-                            draggable={isDraggable}
-                            {...shape}
-                            x={0}
-                            y={0}
-                        />
-                    )
-                default:
-                    break;
-            }
-        })
-    );
-})
+    switch (shape.type) {
+      case ShapeType.RECTANGLE:
+        return <Rect key={shape.id} {...props} />;
+      case ShapeType.CIRCLE:
+        return (
+          <Ellipse
+            key={shape.id}
+            {...props}
+            {...shape}
+            height={shape.radiusY * 2}
+            width={shape.radiusX * 2}
+          />
+        );
+      case ShapeType.LINE:
+        return <Line key={shape.id} {...props} />;
+      case ShapeType.TEXT:
+        return <Text key={shape.id} {...props} />;
+      default:
+        break;
+    }
+  });
+};
 
 export default Shapes;

@@ -1,18 +1,27 @@
-import { KonvaEventObject } from "konva/lib/Node";
-import { useState, useCallback } from "react";
+import { KonvaEventObject } from 'konva/lib/Node';
+import { useState, useCallback } from 'react';
 
 export const getLimitedScale = (currScale: number, min: number, max: number) =>
   Math.max(min, Math.min(max, currScale));
 
 export const useScale = () => {
-  const [scaleBorders] = useState({ min: 0.0001, max: 100 }); // Максимум та мінімум зуму
+  const [scaleBorders] = useState({ min: 3, max: 30 }); // Максимум та мінімум зуму
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
-  const [stageScale, setStageScale] = useState<number>(1);
+  const [stageScale, setStageScale] = useState<number>(10);
 
   const onWheel = useCallback(
     (e: KonvaEventObject<WheelEvent>) => {
+      const activeElement = document.activeElement as HTMLElement;
+
+      if (
+        activeElement.tagName === 'TEXTAREA' ||
+        activeElement.isContentEditable
+      ) {
+        return;
+      }
+
       e.evt.preventDefault();
-      const scaleBy = 1.05; // Це множник швидкості зуму
+      const scaleBy = 1.25; // Це множник швидкості зуму
       const stage = e.target.getStage();
       if (!stage) return;
       const oldScale = stage.scaleX();
