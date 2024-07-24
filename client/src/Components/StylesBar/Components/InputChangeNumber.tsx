@@ -1,6 +1,7 @@
 import { FC, useEffect } from 'react';
 import Placement2D from '../../../types/shape';
 import { valueStyle } from '../../../types/history';
+import InputNumber from './InputNumber';
 
 interface IInputChangeNumber {
   onChangeHandler: (keyStyle: string, value: string | number | Placement2D) => void;
@@ -38,24 +39,32 @@ const InputChangeNumber: FC<IInputChangeNumber> = ({
       >
         {title}
       </label>
-      <div className="flex items-center text-black">
-        <input
-          className=" max-w-[50px]"
+      <div className="flex items-center text-black m-1">
+        <InputNumber
           id={inputId}
-          min={0}
           value={value}
-          onChange={(event) => {
-            onChangeHandler(keyStyle, parseInt(event.target.value));
+          decrement={()=>{
+            onChangeHandler(keyStyle, value-1);
             saveChangeToHistory(
               keyStyle,
-              parseInt(event.target.value),
+              value-1,
               oldValue,
               (val) => {
                 oldValue = val;
               }
             );
           }}
-          type="number"
+          increment={()=>{
+            onChangeHandler(keyStyle, value+1);
+            saveChangeToHistory(
+              keyStyle,
+              value+1,
+              oldValue,
+              (val) => {
+                oldValue = val;
+              }
+            );
+          }}
         />
       </div>
     </>

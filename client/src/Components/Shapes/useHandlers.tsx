@@ -28,7 +28,7 @@ const useHandlers = (
       sendMessage({
         type:MessageTypes.CHANGE_SHAPE,
         userName,
-        id:roomId,
+        roomId,
         value:{
           type:'dragOrTransform',
           newValue:transformerRef.current.nodes().map(node=>{
@@ -99,7 +99,7 @@ const useHandlers = (
     sendMessage({
       type:MessageTypes.START_CHANGE_SHAPE,
       userName,
-      id:roomId,
+      roomId,
       ids:transformerRef.current.nodes().map(node=>node.attrs.id)
     })
    }
@@ -151,14 +151,14 @@ const useHandlers = (
     if (roomId) {
       sendMessage({
         type: MessageTypes.ADD_TO_HISTORY,
-        id: roomId,
+        roomId,
         userName,
         operation,
       });
       sendMessage({
         type:MessageTypes.CHANGE_SHAPE,
         userName,
-        id:roomId,
+        roomId,
         value:newShapes
       })
     }

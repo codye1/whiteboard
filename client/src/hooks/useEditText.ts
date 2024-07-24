@@ -107,7 +107,7 @@ const useEditText = ({
       sendMessage({
         type:MessageTypes.START_CHANGE_SHAPE,
         userName,
-        id:roomId,
+        roomId,
         ids:node.attrs.id
       })
 
@@ -146,7 +146,7 @@ const useEditText = ({
           sendMessage({
             type: MessageTypes.CHANGE_SHAPE,
             userName,
-            id: roomId,
+            roomId,
             value: newShapes,
           });
         }
@@ -163,7 +163,7 @@ const useEditText = ({
           sendMessage({
             type: MessageTypes.ADD_TO_HISTORY,
             userName,
-            id: roomId,
+            roomId,
             operation,
           });
         }
@@ -196,7 +196,7 @@ const useEditText = ({
         sendMessage({
           type:MessageTypes.CHANGE_SHAPE,
           userName,
-          id:roomId,
+          roomId,
           value:{
             type:"editText",
             value:textAreaRef.current.value

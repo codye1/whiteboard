@@ -123,7 +123,7 @@ const useMouseArea = (
     if (roomId) {
       sendMessage({
         userName,
-        id: roomId,
+        roomId,
         type: MessageTypes.PREVIEW_SHAPE_CHANGE,
         shape: shape,
         attrs: attrs,
@@ -243,7 +243,7 @@ const useMouseArea = (
     if (roomId) {
       sendMessage({
         userName,
-        id: roomId,
+        roomId,
         type: MessageTypes.PREVIEW_SHAPE_ADD,
         shape: shape,
         tool: tool,
@@ -257,6 +257,7 @@ const useMouseArea = (
       if (!shape) return;
       const shapeToEdit = previewLayerRef.current?.findOne(`#${shape.id}`);
       shapeToEdit?.destroy();
+      console.log(shape);
 
       dispatch(
         addToHistory({
@@ -269,7 +270,7 @@ const useMouseArea = (
         sendMessage({
           type: MessageTypes.ADD_SHAPE,
           shape,
-          id: roomId,
+          roomId,
           userName,
         });
       }

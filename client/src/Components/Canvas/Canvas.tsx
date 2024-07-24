@@ -1,5 +1,5 @@
 import { TOOLS } from '../../types/shape';
-import { Layer as KonvaLayer, Rect, Stage } from 'react-konva';
+import {   Layer as KonvaLayer, Rect, Stage, } from 'react-konva';
 import Shapes from '../Shapes/Shapes';
 import { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
 import { Layer } from 'konva/lib/Layer';
@@ -9,7 +9,6 @@ import { Transformer } from 'konva/lib/shapes/Transformer';
 import { ISelectedArea } from '../../hooks/useMouseArea';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { ICanvas as ICanvasReducer, initCanvas } from '../../reducers/canvas';
-
 interface ICanvas {
   tool: TOOLS;
   isChange: MutableRefObject<boolean>;
@@ -73,6 +72,7 @@ const Canvas = ({
 
     }
   }, [canvas]);
+
 
   return (
     <Stage

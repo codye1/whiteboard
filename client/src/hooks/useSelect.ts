@@ -13,6 +13,7 @@ import { Shape, ShapeType, TOOLS } from '../types/shape';
 import { MessageTypes, message } from '../types/message';
 import { Transformer } from 'konva/lib/shapes/Transformer';
 import getTextStylesFromNode from '../helpers/getTextStylesFromNode';
+import getRelativePointerPosition from '../helpers/getRelativeMousePosition';
 
 const useSelect = (
   previewLayer: MutableRefObject<Layer | null>,
@@ -100,7 +101,7 @@ const useSelect = (
             sendMessage({
               type: MessageTypes.DELETE_SHAPE,
               userName,
-              id: roomId,
+              roomId,
               ids,
             });
           }
@@ -149,6 +150,26 @@ const useSelect = (
     let timeout: ReturnType<typeof setTimeout>;
 
     const mouseMoveHandler = () => {
+      if (roomId) {
+        const stage = mainLayer.current?.getStage()
+
+        if (!stage) {
+          return
+        }
+
+        const mousePosition = getRelativePointerPosition(stage)
+
+        if (!mousePosition) {
+          return
+        }
+
+        sendMessage({
+          type:MessageTypes.MOUSE_MOVE,
+          userName,
+          roomId,
+          mousePosition
+        })
+      }
       if (
         !mouseDownRef.current ||
         selectedShapeRef.current ||

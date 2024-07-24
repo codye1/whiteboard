@@ -47,9 +47,9 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
         {
           !(transformerHaveText.current && transformerRef.current?.nodes().length==1) &&
           <>
-            <h1 className='text-white'>Настройки фігури</h1>
+            <h1 className='text-white'>Shape style</h1>
             <InputChangeColor
-              title="Обводка"
+              title="Stroke"
               inputId="strokeShape"
               keyStyle='stroke'
               value={styles.stroke}
@@ -57,7 +57,7 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
               saveChangeToHistory={saveChangeStyleToHistory("shape")}
             />
             <InputChangeColor
-              title="Фон"
+              title="Fill"
               inputId="fillShape"
               keyStyle='fill'
               value={styles.fill}
@@ -65,7 +65,7 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
               saveChangeToHistory={saveChangeStyleToHistory("shape")}
             />
             <InputChangeNumber
-              title="Товщина обводки"
+              title="Width stroke"
               inputId="strokeWidthShape"
               keyStyle='strokeWidth'
               value={styles.strokeWidth}
@@ -73,7 +73,7 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
               saveChangeToHistory={saveChangeStyleToHistory("shape")}
             />
             <InputChangeNumber
-              title="Радіус угла"
+              title="Corner radius"
               inputId="cornerRadiusShape"
               keyStyle='cornerRadius'
               value={styles.cornerRadius}
@@ -81,7 +81,7 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
               saveChangeToHistory={saveChangeStyleToHistory("shape")}
             />
             <InputRange
-              title="Прозорість"
+              title="Opacity"
               inputId="opacityShape"
               keyStyle='opacity'
               max={100}
@@ -90,9 +90,9 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
               onChangeHandler={onChangeStyleHandler("shape")}
               saveChangeToHistory={saveChangeStyleToHistory("shape")}
             />
-            <h1 className='text-white'>Настройки тіні</h1>
+            <h1 className='text-white'>Shadow</h1>
             <InputChangeColor
-              title="Колір тіні"
+              title="Color"
               inputId="shadowColor"
               keyStyle='shadowColor'
               value={styles.shadowColor}
@@ -100,7 +100,7 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
               saveChangeToHistory={saveChangeStyleToHistory("shape")}
             />
             <InputChangeTwoNumber
-              mainTitle="Зсув"
+              mainTitle="Offset"
               titleOne="X"
               titleTwo="Y"
               inputId="shadowOffset"
@@ -111,7 +111,7 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
               saveChangeToHistory={saveChangeStyleToHistory("shape")}
             />
             <InputChangeNumber
-              title="Розмиття"
+              title="Blur"
               inputId="shadowBlur"
               keyStyle="shadowBlur"
               value={styles.shadowBlur}
@@ -119,7 +119,7 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
               saveChangeToHistory={saveChangeStyleToHistory("shape")}
             />
             <InputRange
-              title="Прозорість"
+              title="Opacity"
               inputId="shadowOpacity"
               keyStyle='shadowOpacity'
               max={100}
@@ -135,7 +135,7 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
       {
         transformerHaveText.current &&
           <>
-            <h1 className='text-white'>Настройки тексту</h1>
+            <h1 className='text-white'>Text style</h1>
             <RadioButtons
               value={textStyles.align}
               onChangeHandler={onChangeStyleHandler("text")}
@@ -178,7 +178,7 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
               ]}
             />
             <InputChangeColor
-              title="Колір тексту"
+              title="Fill"
               inputId="fillText"
               keyStyle='fill'
               value={textStyles.fill}
@@ -194,7 +194,7 @@ const StylesBar: FC<IStylesBar> = ({ tool, transformerRef, sendMessage , transfo
               saveChangeToHistory={saveChangeStyleToHistory("text")}
             />
             <InputRange
-              title="Прозорість"
+              title="Opasity"
               inputId="opacityText"
               keyStyle='opacity'
               max={100}

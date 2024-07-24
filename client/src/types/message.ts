@@ -16,12 +16,14 @@ export enum MessageTypes {
   UNDO = 'UNDO',
   REDO = 'REDO',
   ADD_TO_HISTORY = 'ADD_TO_HISTORY',
+  MOUSE_MOVE="MOUSE_MOVE"
 }
 
 interface DefaultMessage {
   type: MessageTypes;
   userName: string;
-  id: string;
+  roomId: string;
+  id?:string
 }
 
 interface AddShape extends DefaultMessage {
@@ -72,6 +74,7 @@ interface Connect extends DefaultMessage {
 
 interface UserConnected extends DefaultMessage {
   type: MessageTypes.USER_CONNECTED;
+
 }
 
 export interface SendInitShapes extends DefaultMessage {
@@ -79,6 +82,7 @@ export interface SendInitShapes extends DefaultMessage {
   shapes: Shape[];
   history: operation[];
   undoHistory: operation[];
+  mouses:{userName:string,socketId:string}[]
 }
 
 export interface PreviewShapeAdd extends DefaultMessage {
@@ -117,6 +121,11 @@ interface AddToHistory extends DefaultMessage {
   operation: operation;
 }
 
+interface MouseMove extends DefaultMessage {
+  type:MessageTypes.MOUSE_MOVE
+  mousePosition:Placement2D
+}
+
 export type message =
   | AddShape
   | ChangeShape
@@ -131,4 +140,5 @@ export type message =
   | Undo
   | Redo
   | AddToHistory
+  | MouseMove
 

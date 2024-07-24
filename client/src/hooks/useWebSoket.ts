@@ -19,8 +19,10 @@ import { MessageTypes, message } from '../types/message';
 import { Shape, TOOLS } from '../types/shape';
 import useUserConnectedAlert from './useUserConnectedAlert';
 import { Text } from 'konva/lib/shapes/Text';
+import g from "../icons/mouse-pointer.png"
 
-const socket = io(import.meta.env.VITE_CLIENT);
+
+const socket = io(import.meta.env.VITE_SERVER);
 
 const useWebSocket = (
   previewLayerRef: MutableRefObject<Layer | null>,
@@ -35,37 +37,92 @@ const useWebSocket = (
   const shapeToEditRef = useRef<Node<NodeConfig> | null>(null);
   const { userConnectedAlert } = useUserConnectedAlert();
   const shapesForChange = useRef<Node<NodeConfig>[]>([])
+  const mouseUsersRef= useRef<{id:string,node:Node<NodeConfig>,name:string}[]>([])
+
+
+const loadImage = (src: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = (err) => reject(err);
+    img.src = src;
+  });
+};
+
+const addImageToStage = async (socketid:string,name:string) => {
+
+  const imageUrl = g;
+  const image: HTMLImageElement = await loadImage(imageUrl);
+
+
+  const konvaImage = new Konva.Image({
+    image: image,
+    x: 0,
+    y: 0,
+    width: 2.5,
+    height: 2.5
+  });
+  const group = new Konva.Group()
+
+  const text = new Konva.Text({x:0,y:0,width:100,height:10,text:name,fontSize:2})
+  group.add(konvaImage)
+  group.add(text)
+
+  previewLayerRef.current?.add(group);
+  previewLayerRef.current?.draw();
+
+
+  mouseUsersRef.current.push({
+    id: socketid,
+    node: group,
+    name: name
+  });
+};
+
 
   useEffect(() => {
+    socket.on("socketId",(data)=>{
+      localStorage.setItem("socketId",data)
+    })
     if (roomId) {
+
+
       socket.on('message', (data) => {
         let newShape: KonvaShape<ShapeConfig> | null = null;
         let searchedShape;
-
         const message: message = data;
         switch (message.type) {
           case MessageTypes.USER_CONNECTED:
-            console.log(message.userName);
 
+            if (message.id) {
+              addImageToStage(message.id,message.userName);
+            }
             userConnectedAlert(message.userName);
+
             sendMessage({
-              ...message,
+              userName,
+              roomId,
               type: MessageTypes.SEND_INIT_SHAPES,
               shapes: shapesRef.current,
               history: historyRef.current,
               undoHistory: undoHistoryRef.current,
+              mouses:[{userName:userName,socketId:localStorage.getItem("socketId") || ""},...mouseUsersRef.current.map(mouse=>{return {userName:mouse.name,socketId:mouse.id}})]
             });
             break;
           case MessageTypes.SEND_INIT_SHAPES:
+            message.mouses.forEach(mouse=>{
+              if (mouse.socketId == localStorage.getItem("socketId")) {
+                return
+              }
+              addImageToStage(mouse.socketId,mouse.userName)
+            })
             dispatch(setShapes(message.shapes));
             dispatch(setHistory(message.history));
             dispatch(setUndoHistory(message.undoHistory));
             break;
           case MessageTypes.ADD_SHAPE:
 
-            console.log("add1");
             if (roomId) {
-              console.log("add2");
               shapeToEditRef.current?.destroy();
               dispatch(
                 addToHistory({
@@ -171,8 +228,6 @@ const useWebSocket = (
             }
             break;
           case MessageTypes.CHANGE_SHAPE:
-            console.log("CHANGE");
-
             if ("type" in message.value) {
              if (message.value.type == "dragOrTransform") {
               message.value.newValue.forEach(value=>{
@@ -225,6 +280,24 @@ const useWebSocket = (
               dispatch(addToHistory(message.operation));
             }
             break;
+          case MessageTypes.MOUSE_MOVE:
+            console.log(mouseUsersRef.current);
+            if (roomId) {
+              console.log(mouseUsersRef.current);
+
+              mouseUsersRef.current.forEach((mouse)=>{
+                if (mouse.id == message.id ) {
+                  console.log("work");
+
+                  mouse.node.x(message.mousePosition.x)
+                  mouse.node.y(message.mousePosition.y)
+                }else{
+                  return
+                }
+
+              })
+            }
+            break;
           default:
             break;
         }
@@ -236,14 +309,17 @@ const useWebSocket = (
     };
   }, [userName, roomId]);
 
-  const joinRoom = (roomId: string, userName: string) => {
+  const joinRoom = (roomId: string, userName:string) => {
+
     const initMessage = {
       type: MessageTypes.USER_CONNECTED,
-      id: roomId,
+      roomId,
       userName,
     };
 
     socket.emit('joinRoom', { roomId, userName, initMessage });
+
+
   };
 
   const leaveRoom = () => {
@@ -254,7 +330,6 @@ const useWebSocket = (
 
   const sendMessage = (message: message) => {
     if (roomId) {
-      console.log(message);
 
       socket.emit('message', { roomId, message });
     }

@@ -27,8 +27,12 @@ io.on('connection', (socket) => {
 
   socket.on('joinRoom', ({roomId,userName,initMessage}) => {
     socket.join(roomId);
+    console.log("send",socket.id);
+    socket.emit("socketId", socket.id);
+
     const firstSocketInRoom = io.sockets.adapter.rooms.get(roomId).values().next().value
-    socket.to(firstSocketInRoom).emit("message",initMessage)
+
+    socket.to(firstSocketInRoom).emit("message",{...initMessage,id:socket.id})
     console.log(`Client ${userName} joined room: ${roomId}`);
   });
 
@@ -39,9 +43,8 @@ io.on('connection', (socket) => {
 
   socket.on('message', (data) => {
     const { message } = data;
-    socket.broadcast.to(message.id).emit('message', message);
+    socket.broadcast.to(message.roomId).emit('message', {...message,id:socket.id});
   });
-
 
 
   socket.on('disconnect', () => {

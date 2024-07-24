@@ -1,6 +1,7 @@
 import { FC, useEffect } from 'react';
 import Placement2D from '../../../types/shape';
 import { valueStyle } from '../../../types/history';
+import InputNumber from './InputNumber';
 
 interface IInputChangeTwoNumber {
   onChangeHandler: (keyStyle: string, value: string | number | Placement2D) => void;
@@ -44,46 +45,67 @@ const InputChangeTwoNumber: FC<IInputChangeTwoNumber> = ({
       >
         {mainTitle}
       </label>
-      <div className="flex items-center text-black">
-        <h1 className="text-white mr-1">{titleOne}</h1>
-        <input
-          className=" max-w-[50px] mr-2"
-          min={0}
+      <div className=" items-center text-black table-column">
+        <div className='flex'>
+        <h1 className="text-white mr-2">{titleOne}</h1>
+        <InputNumber
+          id={inputId}
           value={value.x}
-          onChange={(event) => {
-            onChangeHandler(keyStyleOne, parseInt(event.target.value));
+          decrement={()=>{
+            onChangeHandler(keyStyleOne, value.x-1);
             saveChangeToHistory(
               keyStyleOne,
-              parseInt(event.target.value),
+              value.x-1,
               oldValue,
               (val) => {
                 oldValue = val;
               }
             );
           }}
-          id={inputId}
-          type="number"
+          increment={()=>{
+            onChangeHandler(keyStyleOne, value.x+1);
+            saveChangeToHistory(
+              keyStyleOne,
+              value.x+1,
+              oldValue,
+              (val) => {
+                oldValue = val;
+              }
+            );
+          }}
         />
 
-        <h1 className="text-white ">{titleTwo}</h1>
-        <input
-          className="ml-1 max-w-[50px]"
-          min={0}
+        </div>
+        <div className='flex mt-2'>
+        <h1 className="text-white  mr-2">{titleTwo}</h1>
+        <InputNumber
+          id={inputId}
           value={value.y}
-          onChange={(event) => {
-            onChangeHandler(keyStyleTwo, parseInt(event.target.value));
+          decrement={()=>{
+            onChangeHandler(keyStyleTwo, value.y-1);
             saveChangeToHistory(
               keyStyleTwo,
-              parseInt(event.target.value),
+              value.y-1,
               oldValue,
               (val) => {
                 oldValue = val;
               }
             );
           }}
-          id={inputId + keyStyleTwo}
-          type="number"
+          increment={()=>{
+            onChangeHandler(keyStyleTwo, value.y+1);
+            saveChangeToHistory(
+              keyStyleTwo,
+              value.y+1,
+              oldValue,
+              (val) => {
+                oldValue = val;
+              }
+            );
+          }}
         />
+
+        </div>
       </div>
     </>
   );

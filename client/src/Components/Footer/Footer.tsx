@@ -23,7 +23,7 @@ const Footer: FC<IFooter> = ({ sendMessage, ctrlDownRef }) => {
       if (roomId) {
         sendMessage({
           userName,
-          id: roomId,
+          roomId,
           type: MessageTypes.UNDO,
         });
       }
@@ -36,7 +36,7 @@ const Footer: FC<IFooter> = ({ sendMessage, ctrlDownRef }) => {
       if (roomId) {
         sendMessage({
           userName,
-          id: roomId,
+          roomId,
           type: MessageTypes.REDO,
         });
       }

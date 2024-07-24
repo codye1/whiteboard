@@ -62,6 +62,8 @@ const ShareBoardModal: FC<IShareBoardModal> = ({ joinRoom }) => {
                 onClick={() => {
                   dispatch(setName(name));
                   const roomId = (+new Date()).toString(16);
+                  console.log((+new Date()).toString(16));
+
                   dispatch(setroomId(roomId));
                   joinRoom(roomId, name);
                   dispatch(setModalWriteNameOpen(false));

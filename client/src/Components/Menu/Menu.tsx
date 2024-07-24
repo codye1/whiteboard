@@ -126,7 +126,7 @@ const Menu = ({ setStatsOpen, statsOpen, transformerRef }: IMenu) => {
                 className="popover-item cursor-pointer flex p-1 rounded hover:bg-gray-400 "
               >
                 <img src={stats} alt="" className="w-[15px] mr-2" />
-                {statsOpen ? 'Выключить' : 'Включить'} показатель фпс
+                Stats {statsOpen ? 'off' : 'on'}
               </div>
               <div
                 onClick={() => {
@@ -136,7 +136,7 @@ const Menu = ({ setStatsOpen, statsOpen, transformerRef }: IMenu) => {
                 className="popover-item cursor-pointer flex p-1 rounded hover:bg-gray-400 "
               >
                 <img src={clear} alt="" className="w-[15px] mr-2" />
-                Очистить канвас
+                Clear canvas
               </div>
               <div
                 onClick={() => {

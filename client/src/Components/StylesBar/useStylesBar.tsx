@@ -41,7 +41,7 @@ const useStylesBar = (sendMessage: (message: message) => void , transformerRef: 
         if (roomId) {
           sendMessage({
             type: MessageTypes.CHANGE_SHAPE,
-            id: roomId,
+            roomId,
             userName,
             value: updatedShapes,
           });
@@ -76,7 +76,7 @@ const useStylesBar = (sendMessage: (message: message) => void , transformerRef: 
           sendMessage({
             type: MessageTypes.ADD_TO_HISTORY,
             userName,
-            id: roomId,
+            roomId,
             operation,
           });
         }
