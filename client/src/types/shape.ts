@@ -57,7 +57,7 @@ export interface CommonTextStyle {
   fontStyle: string;
   lineHeight: number;
   letterSpacing: number;
-  align:string
+  align: string;
 }
 
 export interface ShapeStyles extends CommonStyle {

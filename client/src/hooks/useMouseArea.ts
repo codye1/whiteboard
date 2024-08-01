@@ -46,8 +46,9 @@ const useMouseArea = (
   const mouseDown = useRef(false);
   const [selectedArea, setSelectedArea] = useState(initialMouseArea);
   const shapePreview = useRef<Shape | null>(null);
-  const { shapes, styles, roomId, userName, textStyles } =
-    useAppSelector((state) => state.canvas);
+  const { shapes, styles, roomId, userName, textStyles } = useAppSelector(
+    (state) => state.canvas
+  );
   const dispatch = useAppDispatch();
   const shape = shapePreview.current;
   const shapeToEdit = previewLayerRef.current?.findOne(`#${shape?.id}`);

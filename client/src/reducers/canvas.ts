@@ -27,7 +27,7 @@ export const textStyles: CommonTextStyle = {
   lineHeight: 1,
   letterSpacing: 0,
   opacity: 1,
-  align:"center"
+  align: 'center',
 };
 
 export interface ICanvas {
@@ -187,8 +187,8 @@ const canvas = createSlice({
     setStyles(state, action: PayloadAction<ShapeStyles>) {
       state.styles = action.payload;
     },
-    setTextStyles(state,action:PayloadAction<CommonTextStyle>){
-      state.textStyles = action.payload
+    setTextStyles(state, action: PayloadAction<CommonTextStyle>) {
+      state.textStyles = action.payload;
     },
     setroomId(state, action: PayloadAction<string>) {
       state.roomId = action.payload;

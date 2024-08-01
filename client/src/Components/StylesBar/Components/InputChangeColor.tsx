@@ -12,7 +12,7 @@ interface IInputChangeColor {
   ) => void;
   title: string;
   value: string;
-  keyStyle:string;
+  keyStyle: string;
   inputId: string;
 }
 let timer: ReturnType<typeof setTimeout>;
@@ -25,9 +25,8 @@ const InputChangeColor: FC<IInputChangeColor> = ({
   inputId,
   value,
   saveChangeToHistory,
-  keyStyle
+  keyStyle,
 }) => {
-
   return (
     <>
       <label

@@ -41,7 +41,6 @@ interface ChangePosition extends DefaultHistoryOperation {
 
 export type valueStyle = string | number | Placement2D | null;
 
-
 interface ChangeStyle extends DefaultHistoryOperation {
   type: TypesHistoryOperation.CHANGE_STYLES;
   key: string;
@@ -51,7 +50,6 @@ interface ChangeStyle extends DefaultHistoryOperation {
   };
   ids: string[];
 }
-
 
 interface ChangeText {
   type: TypesHistoryOperation.CHANGE_TEXT;

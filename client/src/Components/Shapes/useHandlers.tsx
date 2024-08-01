@@ -26,23 +26,22 @@ const useHandlers = (
     }
     if (roomId) {
       sendMessage({
-        type:MessageTypes.CHANGE_SHAPE,
+        type: MessageTypes.CHANGE_SHAPE,
         userName,
         roomId,
-        value:{
-          type:'dragOrTransform',
-          newValue:transformerRef.current.nodes().map(node=>{
+        value: {
+          type: 'dragOrTransform',
+          newValue: transformerRef.current.nodes().map((node) => {
             return {
-              id:node.attrs.id,
-              position:{x:node.x(),y:node.y()},
-              scale:{x:node.scaleX(),y:node.scaleY()},
-              rotate:node.rotation()
-            }
-          })
-        }
-      })
+              id: node.attrs.id,
+              position: { x: node.x(), y: node.y() },
+              scale: { x: node.scaleX(), y: node.scaleY() },
+              rotate: node.rotation(),
+            };
+          }),
+        },
+      });
     }
-
   };
 
   /*
@@ -79,9 +78,9 @@ const useHandlers = (
 
   const oldValue = useRef<shapeAndChangeValue[]>([]);
 
-  const onChangeStart = (event:KonvaEventObject<Event>) => {
+  const onChangeStart = (event: KonvaEventObject<Event>) => {
     isChange.current = true;
-    const nodes = transformerRef.current.nodes()
+    const nodes = transformerRef.current.nodes();
     if (event.target.attrs.id !== nodes[nodes.length - 1].attrs.id) {
       return;
     }
@@ -95,14 +94,14 @@ const useHandlers = (
       });
     });
 
-   if (roomId) {
-    sendMessage({
-      type:MessageTypes.START_CHANGE_SHAPE,
-      userName,
-      roomId,
-      ids:transformerRef.current.nodes().map(node=>node.attrs.id)
-    })
-   }
+    if (roomId) {
+      sendMessage({
+        type: MessageTypes.START_CHANGE_SHAPE,
+        userName,
+        roomId,
+        ids: transformerRef.current.nodes().map((node) => node.attrs.id),
+      });
+    }
   };
 
   const onChangeEnd = (ev: KonvaEventObject<Event>) => {
@@ -156,11 +155,11 @@ const useHandlers = (
         operation,
       });
       sendMessage({
-        type:MessageTypes.CHANGE_SHAPE,
+        type: MessageTypes.CHANGE_SHAPE,
         userName,
         roomId,
-        value:newShapes
-      })
+        value: newShapes,
+      });
     }
   };
 

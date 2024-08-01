@@ -16,14 +16,14 @@ export enum MessageTypes {
   UNDO = 'UNDO',
   REDO = 'REDO',
   ADD_TO_HISTORY = 'ADD_TO_HISTORY',
-  MOUSE_MOVE="MOUSE_MOVE"
+  MOUSE_MOVE = 'MOUSE_MOVE',
 }
 
 interface DefaultMessage {
   type: MessageTypes;
   userName: string;
   roomId: string;
-  id?:string
+  id?: string;
 }
 
 interface AddShape extends DefaultMessage {
@@ -31,23 +31,22 @@ interface AddShape extends DefaultMessage {
   shape: Shape;
 }
 
-
-interface DragOrTransform  {
-  type:"dragOrTransform"
-  newValue:{
-    id:string
-    position:Placement2D
-    scale:Placement2D
-    rotate:number
-  }[]
+interface DragOrTransform {
+  type: 'dragOrTransform';
+  newValue: {
+    id: string;
+    position: Placement2D;
+    scale: Placement2D;
+    rotate: number;
+  }[];
 }
 
 interface EditText {
-  type:"editText"
-  value:string
+  type: 'editText';
+  value: string;
 }
 
-type valueChangeShape = Shape[] | DragOrTransform | EditText
+type valueChangeShape = Shape[] | DragOrTransform | EditText;
 
 interface ChangeShape extends DefaultMessage {
   type: MessageTypes.CHANGE_SHAPE;
@@ -55,12 +54,12 @@ interface ChangeShape extends DefaultMessage {
 }
 
 interface StartChangeShape extends DefaultMessage {
-  type:MessageTypes.START_CHANGE_SHAPE
-  ids:string[] | string
+  type: MessageTypes.START_CHANGE_SHAPE;
+  ids: string[] | string;
 }
 
 interface EndChangeShape extends DefaultMessage {
-  type:MessageTypes.END_CHANGE_SHAPE
+  type: MessageTypes.END_CHANGE_SHAPE;
 }
 
 interface DeleteShape extends DefaultMessage {
@@ -74,7 +73,6 @@ interface Connect extends DefaultMessage {
 
 interface UserConnected extends DefaultMessage {
   type: MessageTypes.USER_CONNECTED;
-
 }
 
 export interface SendInitShapes extends DefaultMessage {
@@ -82,7 +80,7 @@ export interface SendInitShapes extends DefaultMessage {
   shapes: Shape[];
   history: operation[];
   undoHistory: operation[];
-  mouses:{userName:string,socketId:string}[]
+  mouses: { userName: string; socketId: string }[];
 }
 
 export interface PreviewShapeAdd extends DefaultMessage {
@@ -122,8 +120,8 @@ interface AddToHistory extends DefaultMessage {
 }
 
 interface MouseMove extends DefaultMessage {
-  type:MessageTypes.MOUSE_MOVE
-  mousePosition:Placement2D
+  type: MessageTypes.MOUSE_MOVE;
+  mousePosition: Placement2D;
 }
 
 export type message =
@@ -140,5 +138,4 @@ export type message =
   | Undo
   | Redo
   | AddToHistory
-  | MouseMove
-
+  | MouseMove;

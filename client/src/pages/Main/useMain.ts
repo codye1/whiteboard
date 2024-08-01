@@ -1,13 +1,13 @@
-import { useRef } from "react";
-import useEditText from "../../hooks/useEditText";
-import useMouseArea from "../../hooks/useMouseArea";
-import { useScale } from "../../hooks/useScale";
-import useSelect from "../../hooks/useSelect";
-import useTool from "../../hooks/useTool";
-import useWebSocket from "../../hooks/useWebSoket";
-import useRefs from "../../hooks/useRefs";
+import { useRef } from 'react';
+import useEditText from '../../hooks/useEditText';
+import useMouseArea from '../../hooks/useMouseArea';
+import { useScale } from '../../hooks/useScale';
+import useSelect from '../../hooks/useSelect';
+import useTool from '../../hooks/useTool';
+import useWebSocket from '../../hooks/useWebSoket';
+import useRefs from '../../hooks/useRefs';
 
-const useMain = ()=>{
+const useMain = () => {
   const {
     mainLayerRef,
     previewLayerRef,
@@ -43,17 +43,18 @@ const useMain = ()=>{
     selectedArea,
   } = useMouseArea(tool, sendMessage, previewLayerRef, openEditText, setTool);
 
-  const { onMouseDownHandlerSelect, ctrlDownRef  , transformerHaveText } = useSelect(
-    previewLayerRef,
-    tool,
-    setTool,
-    selectedArea,
-    mainLayerRef,
-    sendMessage,
-    shapesRef,
-    transformerRef,
-    isChange
-  );
+  const { onMouseDownHandlerSelect, ctrlDownRef, transformerHaveText } =
+    useSelect(
+      previewLayerRef,
+      tool,
+      setTool,
+      selectedArea,
+      mainLayerRef,
+      sendMessage,
+      shapesRef,
+      transformerRef,
+      isChange
+    );
 
   const headerProps = {
     joinRoom,
@@ -62,32 +63,32 @@ const useMain = ()=>{
     setTool,
     transformerRef,
     transformerHaveText,
-  }
+  };
 
   const canvasProps = {
-        onMouseDownHandlerArea,
-        onMouseDownHandlerSelect,
-        onWheel,
-        mouseUpHandler,
-        mouseMoveHandler,
-        openEditText,
-        sendMessage,
-        isChange,
-        tool,
-        selectedArea,
-        previewLayerRef,
-        mainLayerRef,
-        transformerRef,
-        stagePos,
-        stageScale,
-  }
+    onMouseDownHandlerArea,
+    onMouseDownHandlerSelect,
+    onWheel,
+    mouseUpHandler,
+    mouseMoveHandler,
+    openEditText,
+    sendMessage,
+    isChange,
+    tool,
+    selectedArea,
+    previewLayerRef,
+    mainLayerRef,
+    transformerRef,
+    stagePos,
+    stageScale,
+  };
 
   const footerProps = {
     sendMessage,
-    ctrlDownRef
-  }
+    ctrlDownRef,
+  };
 
-  return {headerProps,canvasProps,footerProps}
-}
+  return { headerProps, canvasProps, footerProps };
+};
 
-export default useMain
+export default useMain;

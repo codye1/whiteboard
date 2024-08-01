@@ -15,7 +15,7 @@ interface IHeader {
   tool: TOOLS;
   transformerRef: MutableRefObject<Transformer | null>;
   sendMessage: (message: message) => void;
-  transformerHaveText: MutableRefObject<Node<NodeConfig> | null>
+  transformerHaveText: MutableRefObject<Node<NodeConfig> | null>;
 }
 
 const Header = ({
@@ -24,7 +24,7 @@ const Header = ({
   tool,
   transformerRef,
   sendMessage,
-  transformerHaveText
+  transformerHaveText,
 }: IHeader) => {
   const [statsOpen, setStatsOpen] = useState(false);
 

@@ -19,8 +19,7 @@ import { MessageTypes, message } from '../types/message';
 import { Shape, TOOLS } from '../types/shape';
 import useUserConnectedAlert from './useUserConnectedAlert';
 import { Text } from 'konva/lib/shapes/Text';
-import g from "../icons/mouse-pointer.png"
-
+import g from '../icons/mouse-pointer.png';
 
 const socket = io(import.meta.env.VITE_SERVER);
 
@@ -36,66 +35,67 @@ const useWebSocket = (
   const dispatch = useAppDispatch();
   const shapeToEditRef = useRef<Node<NodeConfig> | null>(null);
   const { userConnectedAlert } = useUserConnectedAlert();
-  const shapesForChange = useRef<Node<NodeConfig>[]>([])
-  const mouseUsersRef= useRef<{id:string,node:Node<NodeConfig>,name:string}[]>([])
+  const shapesForChange = useRef<Node<NodeConfig>[]>([]);
+  const mouseUsersRef = useRef<
+    { id: string; node: Node<NodeConfig>; name: string }[]
+  >([]);
 
+  const loadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = (err) => reject(err);
+      img.src = src;
+    });
+  };
 
-const loadImage = (src: string): Promise<HTMLImageElement> => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = (err) => reject(err);
-    img.src = src;
-  });
-};
+  const addImageToStage = async (socketid: string, name: string) => {
+    const imageUrl = g;
+    const image: HTMLImageElement = await loadImage(imageUrl);
 
-const addImageToStage = async (socketid:string,name:string) => {
+    const konvaImage = new Konva.Image({
+      image: image,
+      x: 0,
+      y: 0,
+      width: 2.5,
+      height: 2.5,
+    });
+    const group = new Konva.Group();
 
-  const imageUrl = g;
-  const image: HTMLImageElement = await loadImage(imageUrl);
+    const text = new Konva.Text({
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 10,
+      text: name,
+      fontSize: 2,
+    });
+    group.add(konvaImage);
+    group.add(text);
 
+    previewLayerRef.current?.add(group);
+    previewLayerRef.current?.draw();
 
-  const konvaImage = new Konva.Image({
-    image: image,
-    x: 0,
-    y: 0,
-    width: 2.5,
-    height: 2.5
-  });
-  const group = new Konva.Group()
-
-  const text = new Konva.Text({x:0,y:0,width:100,height:10,text:name,fontSize:2})
-  group.add(konvaImage)
-  group.add(text)
-
-  previewLayerRef.current?.add(group);
-  previewLayerRef.current?.draw();
-
-
-  mouseUsersRef.current.push({
-    id: socketid,
-    node: group,
-    name: name
-  });
-};
-
+    mouseUsersRef.current.push({
+      id: socketid,
+      node: group,
+      name: name,
+    });
+  };
 
   useEffect(() => {
-    socket.on("socketId",(data)=>{
-      localStorage.setItem("socketId",data)
-    })
+    socket.on('socketId', (data) => {
+      localStorage.setItem('socketId', data);
+    });
     if (roomId) {
-
-
       socket.on('message', (data) => {
         let newShape: KonvaShape<ShapeConfig> | null = null;
         let searchedShape;
         const message: message = data;
         switch (message.type) {
           case MessageTypes.USER_CONNECTED:
-
             if (message.id) {
-              addImageToStage(message.id,message.userName);
+              addImageToStage(message.id, message.userName);
             }
             userConnectedAlert(message.userName);
 
@@ -106,22 +106,29 @@ const addImageToStage = async (socketid:string,name:string) => {
               shapes: shapesRef.current,
               history: historyRef.current,
               undoHistory: undoHistoryRef.current,
-              mouses:[{userName:userName,socketId:localStorage.getItem("socketId") || ""},...mouseUsersRef.current.map(mouse=>{return {userName:mouse.name,socketId:mouse.id}})]
+              mouses: [
+                {
+                  userName: userName,
+                  socketId: localStorage.getItem('socketId') || '',
+                },
+                ...mouseUsersRef.current.map((mouse) => {
+                  return { userName: mouse.name, socketId: mouse.id };
+                }),
+              ],
             });
             break;
           case MessageTypes.SEND_INIT_SHAPES:
-            message.mouses.forEach(mouse=>{
-              if (mouse.socketId == localStorage.getItem("socketId")) {
-                return
+            message.mouses.forEach((mouse) => {
+              if (mouse.socketId == localStorage.getItem('socketId')) {
+                return;
               }
-              addImageToStage(mouse.socketId,mouse.userName)
-            })
+              addImageToStage(mouse.socketId, mouse.userName);
+            });
             dispatch(setShapes(message.shapes));
             dispatch(setHistory(message.history));
             dispatch(setUndoHistory(message.undoHistory));
             break;
           case MessageTypes.ADD_SHAPE:
-
             if (roomId) {
               shapeToEditRef.current?.destroy();
               dispatch(
@@ -228,53 +235,56 @@ const addImageToStage = async (socketid:string,name:string) => {
             }
             break;
           case MessageTypes.CHANGE_SHAPE:
-            if ("type" in message.value) {
-             if (message.value.type == "dragOrTransform") {
-              message.value.newValue.forEach(value=>{
-                const node = shapesForChange.current.find(node=>node.attrs.id==value.id)
-                if (node) {
-                  node.x(value.position.x)
-                  node.y(value.position.y)
-                  node.scaleX(value.scale.x)
-                  node.scaleY(value.scale.y)
-                  node.rotation(value.rotate)
-                }
-              })
-             }else if(shapeToEditRef.current instanceof Text){
-              console.log(message.value.value);
+            if ('type' in message.value) {
+              if (message.value.type == 'dragOrTransform') {
+                message.value.newValue.forEach((value) => {
+                  const node = shapesForChange.current.find(
+                    (node) => node.attrs.id == value.id
+                  );
+                  if (node) {
+                    node.x(value.position.x);
+                    node.y(value.position.y);
+                    node.scaleX(value.scale.x);
+                    node.scaleY(value.scale.y);
+                    node.rotation(value.rotate);
+                  }
+                });
+              } else if (shapeToEditRef.current instanceof Text) {
+                console.log(message.value.value);
 
-              shapeToEditRef.current.text(message.value.value)
-              console.log(shapeToEditRef.current);
-
-             }
-            }else{
+                shapeToEditRef.current.text(message.value.value);
+                console.log(shapeToEditRef.current);
+              }
+            } else {
               dispatch(setShapes(message.value));
             }
             break;
           case MessageTypes.START_CHANGE_SHAPE:
-            console.log("startt");
+            console.log('startt');
 
             if (roomId) {
-              shapesForChange.current=[]
-              if (typeof message.ids == "string") {
-                const node = mainLayerRef.current?.findOne(`#${message.ids}`)
-
+              shapesForChange.current = [];
+              if (typeof message.ids == 'string') {
+                const node = mainLayerRef.current?.findOne(`#${message.ids}`);
 
                 if (node) {
                   console.log(node);
 
-                  shapeToEditRef.current = node
+                  shapeToEditRef.current = node;
                 }
-              }else{
-                message.ids.forEach(id=>{
-                  const node = mainLayerRef.current?.findOne(`#${id}`)
+              } else {
+                message.ids.forEach((id) => {
+                  const node = mainLayerRef.current?.findOne(`#${id}`);
                   if (node) {
-                    shapesForChange.current = [...shapesForChange.current,node]
+                    shapesForChange.current = [
+                      ...shapesForChange.current,
+                      node,
+                    ];
                   }
-                })
+                });
               }
             }
-            break
+            break;
           case MessageTypes.ADD_TO_HISTORY:
             if (roomId) {
               dispatch(addToHistory(message.operation));
@@ -285,17 +295,16 @@ const addImageToStage = async (socketid:string,name:string) => {
             if (roomId) {
               console.log(mouseUsersRef.current);
 
-              mouseUsersRef.current.forEach((mouse)=>{
-                if (mouse.id == message.id ) {
-                  console.log("work");
+              mouseUsersRef.current.forEach((mouse) => {
+                if (mouse.id == message.id) {
+                  console.log('work');
 
-                  mouse.node.x(message.mousePosition.x)
-                  mouse.node.y(message.mousePosition.y)
-                }else{
-                  return
+                  mouse.node.x(message.mousePosition.x);
+                  mouse.node.y(message.mousePosition.y);
+                } else {
+                  return;
                 }
-
-              })
+              });
             }
             break;
           default:
@@ -309,8 +318,7 @@ const addImageToStage = async (socketid:string,name:string) => {
     };
   }, [userName, roomId]);
 
-  const joinRoom = (roomId: string, userName:string) => {
-
+  const joinRoom = (roomId: string, userName: string) => {
     const initMessage = {
       type: MessageTypes.USER_CONNECTED,
       roomId,
@@ -318,8 +326,6 @@ const addImageToStage = async (socketid:string,name:string) => {
     };
 
     socket.emit('joinRoom', { roomId, userName, initMessage });
-
-
   };
 
   const leaveRoom = () => {
@@ -330,7 +336,6 @@ const addImageToStage = async (socketid:string,name:string) => {
 
   const sendMessage = (message: message) => {
     if (roomId) {
-
       socket.emit('message', { roomId, message });
     }
   };

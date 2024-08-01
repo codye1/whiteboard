@@ -1,10 +1,10 @@
-import { valueStyle } from "../../../types/history";
-interface defaultButton{
-  src:string
-  value:valueStyle
+import { valueStyle } from '../../../types/history';
+interface defaultButton {
+  src: string;
+  value: valueStyle;
 }
 
-interface IRadioButtons{
+interface IRadioButtons {
   onChangeHandler: (keyStyle: string, value: valueStyle) => void;
   saveChangeToHistory: (
     keyStyle: string,
@@ -12,30 +12,43 @@ interface IRadioButtons{
     oldValue: valueStyle,
     setNewOldValue: (val: valueStyle) => void
   ) => void;
-  keyStyle:string
+  keyStyle: string;
   value: string;
-  buttons:defaultButton[]
+  buttons: defaultButton[];
 }
 
-const RadioButtons = ({onChangeHandler,saveChangeToHistory,value,keyStyle,buttons}:IRadioButtons) => {
-
-
+const RadioButtons = ({
+  onChangeHandler,
+  saveChangeToHistory,
+  value,
+  keyStyle,
+  buttons,
+}: IRadioButtons) => {
   return (
-      <fieldset className='flex justify-between'>
-        {buttons.map((button,index)=>
-          <div key={index} className="mt-2 mb-2">
-            <input type="radio" className="hidden" id={button.value?.toString()} name={keyStyle} value={button.value?.toString()}
-              onChange={(ev)=>{
-                saveChangeToHistory(keyStyle,ev.target.value,value,()=>{})
-                onChangeHandler(keyStyle,ev.target.value)
-              }}
+    <fieldset className="flex justify-between">
+      {buttons.map((button, index) => (
+        <div key={index} className="mt-2 mb-2">
+          <input
+            type="radio"
+            className="hidden"
+            id={button.value?.toString()}
+            name={keyStyle}
+            value={button.value?.toString()}
+            onChange={(ev) => {
+              saveChangeToHistory(keyStyle, ev.target.value, value, () => {});
+              onChangeHandler(keyStyle, ev.target.value);
+            }}
+          />
+          <label htmlFor={button.value?.toString()}>
+            <img
+              alt=""
+              className={`w-[30px] cursor-pointer rounded ${value == button.value ? 'border  border-white' : 'hover:border hover:border-white '}`}
+              src={button.src}
             />
-            <label htmlFor={button.value?.toString()}>
-              <img  alt="" className={`w-[30px] cursor-pointer rounded ${value==button.value? "border  border-white" : "hover:border hover:border-white "}`} src={button.src}/>
-            </label>
-          </div>
-        )}
-      </fieldset>
+          </label>
+        </div>
+      ))}
+    </fieldset>
   );
 };
 

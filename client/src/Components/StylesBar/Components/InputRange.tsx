@@ -3,7 +3,10 @@ import { valueStyle } from '../../../types/history';
 import Placement2D from '../../../types/shape';
 
 interface IInputRange {
-  onChangeHandler: (keyStyle: string, value: string | number | Placement2D) => void;
+  onChangeHandler: (
+    keyStyle: string,
+    value: string | number | Placement2D
+  ) => void;
   saveChangeToHistory: (
     keyStyle: string,
     value: valueStyle,
@@ -15,7 +18,7 @@ interface IInputRange {
   max: number;
   min: number;
   inputId: string;
-  keyStyle:string
+  keyStyle: string;
 }
 
 let oldValue: valueStyle;
@@ -28,7 +31,7 @@ const InputRange: FC<IInputRange> = ({
   inputId,
   min,
   max,
-  keyStyle
+  keyStyle,
 }) => {
   useEffect(() => {
     oldValue = value;

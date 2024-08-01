@@ -3,13 +3,13 @@ import Canvas from '../../Components/Canvas/Canvas';
 import useMain from './useMain';
 import Footer from '../../Components/Footer/Footer';
 const Main = () => {
-  const  {headerProps,canvasProps,footerProps} = useMain()
+  const { headerProps, canvasProps, footerProps } = useMain();
 
   return (
     <main>
       <Header {...headerProps} />
       <Canvas {...canvasProps} />
-      <Footer {...footerProps}/>
+      <Footer {...footerProps} />
     </main>
   );
 };

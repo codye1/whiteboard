@@ -5,7 +5,12 @@ import { Layer } from 'konva/lib/Layer';
 import { ISelectedArea, initialMouseArea } from './useMouseArea';
 import isShapeInSelection from '../helpers/isShapeInSelection';
 import { useAppDispatch, useAppSelector } from './hooks';
-import { addToHistory, setShapes, setStyles, setTextStyles, } from '../reducers/canvas';
+import {
+  addToHistory,
+  setShapes,
+  setStyles,
+  setTextStyles,
+} from '../reducers/canvas';
 import getRelativeClientRect from '../helpers/getRealtiveClientRect';
 import getStylesFromNode from '../helpers/getStylesFromNode';
 import { TypesHistoryOperation } from '../types/history';
@@ -30,8 +35,8 @@ const useSelect = (
   const ctrlDownRef = useRef(false);
   const mouseDownRef = useRef(false);
   const selectedAreaRef = useRef<ISelectedArea>(selectedArea);
-  const transformerHaveText = useRef<Node<NodeConfig>|null>(null)
-  const { shapes, userName, roomId, styles , textStyles } = useAppSelector(
+  const transformerHaveText = useRef<Node<NodeConfig> | null>(null);
+  const { shapes, userName, roomId, styles, textStyles } = useAppSelector(
     (state) => state.canvas
   );
   const dispatch = useAppDispatch();
@@ -46,7 +51,7 @@ const useSelect = (
       transformerRef.current.nodes([]);
       shapesInAreaRef.current = [];
       selectedShapeRef.current = null;
-      transformerHaveText.current = null
+      transformerHaveText.current = null;
       return;
     }
 
@@ -63,7 +68,9 @@ const useSelect = (
 
     selectedShapeRef.current =
       shapes.find((shape) => shape.id === event.target.attrs.id) || null;
-    event.target.attrs.type == ShapeType.TEXT? transformerHaveText.current = event.target : null
+    event.target.attrs.type == ShapeType.TEXT
+      ? (transformerHaveText.current = event.target)
+      : null;
 
     if (selectedShapeRef.current) {
       if (!ctrlDownRef.current) transformerRef.current.nodes([]);
@@ -71,7 +78,6 @@ const useSelect = (
       const nodes = transformerRef.current.nodes();
 
       transformerRef.current.nodes([...nodes, event.target]);
-
     }
   }
 
@@ -151,24 +157,24 @@ const useSelect = (
 
     const mouseMoveHandler = () => {
       if (roomId) {
-        const stage = mainLayer.current?.getStage()
+        const stage = mainLayer.current?.getStage();
 
         if (!stage) {
-          return
+          return;
         }
 
-        const mousePosition = getRelativePointerPosition(stage)
+        const mousePosition = getRelativePointerPosition(stage);
 
         if (!mousePosition) {
-          return
+          return;
         }
 
         sendMessage({
-          type:MessageTypes.MOUSE_MOVE,
+          type: MessageTypes.MOUSE_MOVE,
           userName,
           roomId,
-          mousePosition
-        })
+          mousePosition,
+        });
       }
       if (
         !mouseDownRef.current ||
@@ -204,14 +210,14 @@ const useSelect = (
         transformerRef.current.nodes().length == 0
       ) {
         selectedShapeRef.current = null;
-        transformerHaveText.current = null
+        transformerHaveText.current = null;
         const nodeShapes = shapesInAreaRef.current
           .map((shape) => mainLayer.current?.findOne(`#${shape.id}`))
           .filter((node): node is Konva.Node => {
             if (node?.attrs.type == ShapeType.TEXT) {
-              transformerHaveText.current = node
+              transformerHaveText.current = node;
             }
-            return node !== undefined
+            return node !== undefined;
           });
         transformerRef.current.nodes(nodeShapes);
 
@@ -228,13 +234,17 @@ const useSelect = (
       const nodes = transformerRef.current.nodes();
 
       if (nodes.length > 0) {
-        console.log("work");
+        console.log('work');
 
         dispatch(setStyles(getStylesFromNode(nodes[0], styles)));
       }
       if (transformerHaveText.current) {
-        console.log("work");
-        dispatch(setTextStyles(getTextStylesFromNode(transformerHaveText.current,textStyles)))
+        console.log('work');
+        dispatch(
+          setTextStyles(
+            getTextStylesFromNode(transformerHaveText.current, textStyles)
+          )
+        );
       }
     };
 
@@ -257,7 +267,13 @@ const useSelect = (
     };
   }, [tool, roomId, userName]);
 
-  return { onMouseDownHandlerSelect, mainLayer, ctrlDownRef, transformerRef , transformerHaveText};
+  return {
+    onMouseDownHandlerSelect,
+    mainLayer,
+    ctrlDownRef,
+    transformerRef,
+    transformerHaveText,
+  };
 };
 
 export default useSelect;

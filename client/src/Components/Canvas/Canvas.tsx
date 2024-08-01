@@ -1,5 +1,5 @@
 import { TOOLS } from '../../types/shape';
-import {   Layer as KonvaLayer, Rect, Stage, } from 'react-konva';
+import { Layer as KonvaLayer, Rect, Stage } from 'react-konva';
 import Shapes from '../Shapes/Shapes';
 import { KonvaEventObject, Node, NodeConfig } from 'konva/lib/Node';
 import { Layer } from 'konva/lib/Layer';
@@ -50,8 +50,6 @@ const Canvas = ({
   isChange,
   selectedArea,
 }: ICanvas) => {
-
-
   const canvas = useAppSelector((state) => state.canvas);
   const [canvasInit, setCanvasInit] = useState(false);
   const dispatch = useAppDispatch();
@@ -69,10 +67,8 @@ const Canvas = ({
   useEffect(() => {
     if (canvasInit) {
       localStorage.setItem('canvas', JSON.stringify(canvas));
-
     }
   }, [canvas]);
-
 
   return (
     <Stage

@@ -11,7 +11,7 @@ const InputCheckBox: FC<IInputCheckBox> = ({
   onChange,
   title,
   value,
-  inputId
+  inputId,
 }) => {
   return (
     <>

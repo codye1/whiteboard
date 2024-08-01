@@ -74,12 +74,15 @@ const useEditText = ({
     textAreaRef.current.style.top = areaPosition.y + 'px';
     textAreaRef.current.style.left = areaPosition.x + 'px';
 
-    if (node.text().length==0) {
-      textAreaRef.current.style.width = ((node.width()*stageScale)+node.fontSize()*stageScale) + 'px';
-      textAreaRef.current.style.height = node.height()*stageScale + 'px';
-    }else{
-      textAreaRef.current.style.width = node.width()*stage.getAbsoluteScale().x + 'px';
-      textAreaRef.current.style.height = node.height()*stage.getAbsoluteScale().y + 'px';
+    if (node.text().length == 0) {
+      textAreaRef.current.style.width =
+        node.width() * stageScale + node.fontSize() * stageScale + 'px';
+      textAreaRef.current.style.height = node.height() * stageScale + 'px';
+    } else {
+      textAreaRef.current.style.width =
+        node.width() * stage.getAbsoluteScale().x + 'px';
+      textAreaRef.current.style.height =
+        node.height() * stage.getAbsoluteScale().y + 'px';
     }
     console.log(stage.getAbsoluteScale());
 
@@ -94,23 +97,22 @@ const useEditText = ({
     textAreaRef.current.style.fontStyle = node.fontStyle();
     textAreaRef.current.style.lineHeight = `${node.lineHeight()}`;
     textAreaRef.current.style.fontFamily = node.fontFamily();
-    textAreaRef.current.style.textAlign = node.align()
+    textAreaRef.current.style.textAlign = node.align();
     textAreaRef.current.style.stroke = node.stroke();
     textAreaRef.current.style.fontWeight = '500';
     textAreaRef.current.style.transformOrigin = 'left top';
     textAreaRef.current.style.textAlign = node.align();
     textAreaRef.current.style.color = node.fill();
-    textAreaRef.current.style.letterSpacing = node.letterSpacing() + "px"
+    textAreaRef.current.style.letterSpacing = node.letterSpacing() + 'px';
     const rotation = node.rotation();
 
     if (roomId) {
       sendMessage({
-        type:MessageTypes.START_CHANGE_SHAPE,
+        type: MessageTypes.START_CHANGE_SHAPE,
         userName,
         roomId,
-        ids:node.attrs.id
-      })
-
+        ids: node.attrs.id,
+      });
     }
     let transform = '';
     if (rotation) {
@@ -185,31 +187,30 @@ const useEditText = ({
       // textAreaRef.current.style.width  = (textAreaRef.current.value.length+1)*(node.fontSize()*(stageScale)) + "px"
       // textAreaRef.current.style.width = (textAreaRef.current.value.length+1)*(14*stageScale) + "px"
 
-      node.text(textAreaRef.current.value)
-      textAreaRef.current.style.width = node.width()*stageScale+(node.fontSize()*stageScale)+ "px"
-      textAreaRef.current.style.height = node.height()*stageScale+(node.fontSize()*stageScale) + "px"
-
+      node.text(textAreaRef.current.value);
+      textAreaRef.current.style.width =
+        node.width() * stageScale + node.fontSize() * stageScale + 'px';
+      textAreaRef.current.style.height =
+        node.height() * stageScale + node.fontSize() * stageScale + 'px';
     };
-    const k = ( ) => {
+    const k = () => {
       if (roomId) {
-
         sendMessage({
-          type:MessageTypes.CHANGE_SHAPE,
+          type: MessageTypes.CHANGE_SHAPE,
           userName,
           roomId,
-          value:{
-            type:"editText",
-            value:textAreaRef.current.value
-          }
-        })
-
+          value: {
+            type: 'editText',
+            value: textAreaRef.current.value,
+          },
+        });
       }
-    }
+    };
 
     setTimeout(() => {
       window.addEventListener('click', handleOutsideClick);
-      textAreaRef.current.addEventListener("keydown", keyDownHandler);
-      textAreaRef.current.addEventListener("keyup", k);
+      textAreaRef.current.addEventListener('keydown', keyDownHandler);
+      textAreaRef.current.addEventListener('keyup', k);
     });
   };
 

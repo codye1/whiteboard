@@ -4,7 +4,10 @@ import { valueStyle } from '../../../types/history';
 import InputNumber from './InputNumber';
 
 interface IInputChangeNumber {
-  onChangeHandler: (keyStyle: string, value: string | number | Placement2D) => void;
+  onChangeHandler: (
+    keyStyle: string,
+    value: string | number | Placement2D
+  ) => void;
   saveChangeToHistory: (
     keyStyle: string,
     value: valueStyle,
@@ -13,7 +16,7 @@ interface IInputChangeNumber {
   ) => void;
   title: string;
   value: number;
-  keyStyle:string
+  keyStyle: string;
   inputId: string;
 }
 
@@ -25,7 +28,7 @@ const InputChangeNumber: FC<IInputChangeNumber> = ({
   inputId,
   onChangeHandler,
   saveChangeToHistory,
-  keyStyle
+  keyStyle,
 }) => {
   useEffect(() => {
     oldValue = value;
@@ -43,27 +46,17 @@ const InputChangeNumber: FC<IInputChangeNumber> = ({
         <InputNumber
           id={inputId}
           value={value}
-          decrement={()=>{
-            onChangeHandler(keyStyle, value-1);
-            saveChangeToHistory(
-              keyStyle,
-              value-1,
-              oldValue,
-              (val) => {
-                oldValue = val;
-              }
-            );
+          decrement={() => {
+            onChangeHandler(keyStyle, value - 1);
+            saveChangeToHistory(keyStyle, value - 1, oldValue, (val) => {
+              oldValue = val;
+            });
           }}
-          increment={()=>{
-            onChangeHandler(keyStyle, value+1);
-            saveChangeToHistory(
-              keyStyle,
-              value+1,
-              oldValue,
-              (val) => {
-                oldValue = val;
-              }
-            );
+          increment={() => {
+            onChangeHandler(keyStyle, value + 1);
+            saveChangeToHistory(keyStyle, value + 1, oldValue, (val) => {
+              oldValue = val;
+            });
           }}
         />
       </div>
